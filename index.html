@@ -14,166 +14,88 @@
         :root {
             --bg-color: #0d0e15;
             --panel-color: #161925;
+            --sidebar-color: #0f111a;
             --neon-cyan: #00f3ff;
             --neon-magenta: #ff0077;
             --text-color: #e0e6ed;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        html, body {
-            height: 100%;
-            width: 100%;
-            background: var(--bg-color); 
-            color: var(--text-color);
-            font-family: sans-serif;
-            overflow: hidden;
-        }
-
-        body { 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { height: 100%; width: 100%; background: var(--bg-color); color: var(--text-color); font-family: sans-serif; overflow: hidden; }
+        body { display: flex; align-items: center; justify-content: center; }
         
-        #splash-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: var(--bg-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: opacity 0.5s ease;
-        }
+        /* スプラッシュ画面 */
+        #splash-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--bg-color); display: flex; justify-content: center; align-items: center; z-index: 9999; transition: opacity 0.5s ease; }
+        .neon-logo { font-size: 2.5rem; font-weight: bold; color: #fff; text-transform: uppercase; letter-spacing: 4px; text-shadow: 0 0 5px #fff, 0 0 20px var(--neon-cyan), 0 0 40px var(--neon-cyan); animation: flicker 2s infinite alternate; }
+        @keyframes flicker { 0%, 100% { text-shadow: 0 0 4px #fff, 0 0 19px var(--neon-cyan), 0 0 40px var(--neon-cyan); } 20%, 24% { text-shadow: none; } }
 
-        .neon-logo {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #fff;
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px var(--neon-cyan), 0 0 40px var(--neon-cyan), 0 0 80px var(--neon-cyan);
-            animation: flicker 2s infinite alternate;
-        }
-
-        @keyframes flicker {
-            0%, 18%, 22%, 25%, 53%, 57%, 100% { text-shadow: 0 0 4px #fff, 0 0 11px #fff, 0 0 19px var(--neon-cyan), 0 0 40px var(--neon-cyan), 0 0 80px var(--neon-cyan); }
-            20%, 24%, 55% { text-shadow: none; }
-        }
-
-        .auth-container { 
-            background: var(--panel-color); 
-            padding: 30px 20px; 
-            border-radius: 8px; 
-            border: 2px solid var(--neon-magenta);
-            box-shadow: 0 0 15px rgba(255, 0, 119, 0.3); 
-            width: 90%;
-            max-width: 340px; 
-            text-align: center; 
-            z-index: 10;
-        }
+        /* ログイン・登録コンテナ */
+        .auth-container { background: var(--panel-color); padding: 30px 20px; border-radius: 8px; border: 2px solid var(--neon-magenta); box-shadow: 0 0 15px rgba(255, 0, 119, 0.3); width: 90%; max-width: 340px; text-align: center; z-index: 10; }
         .auth-container h2 { margin-bottom: 20px; color: white; text-shadow: 0 0 8px var(--neon-magenta); }
-        .auth-container input { 
-            width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 4px; border: 1px solid #1f2833; background: #0b0c10; color: white; font-size: 16px;
-        }
-        .auth-container input:focus { border-color: var(--neon-cyan); box-shadow: 0 0 10px rgba(0, 243, 255, 0.5); outline: none; }
-        
-        .auth-container button#main-btn { 
-            width: 100%; padding: 12px; background: transparent; border: 2px solid var(--neon-cyan); border-radius: 4px; color: var(--neon-cyan); font-weight: bold; cursor: pointer; margin-bottom: 15px; text-shadow: 0 0 5px var(--neon-cyan); box-shadow: 0 0 5px rgba(0, 243, 255, 0.2); font-size: 16px; transition: all 0.3s ease;
-        }
-        .auth-container button#main-btn:hover { background-color: var(--neon-cyan); color: #000; box-shadow: 0 0 15px var(--neon-cyan); }
+        .auth-container input, .auth-container select { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 4px; border: 1px solid #1f2833; background: #0b0c10; color: white; font-size: 16px; }
+        .auth-container input:focus, .auth-container select:focus { border-color: var(--neon-cyan); outline: none; }
+        .auth-container button#main-btn { width: 100%; padding: 12px; background: transparent; border: 2px solid var(--neon-cyan); border-radius: 4px; color: var(--neon-cyan); font-weight: bold; cursor: pointer; text-shadow: 0 0 5px var(--neon-cyan); font-size: 16px; margin-bottom: 15px; }
         .auth-container .switch-btn { background: none; color: var(--neon-cyan); font-size: 14px; cursor: pointer; border: none; }
-
         .password-wrap { position: relative; width: 100%; }
         .password-wrap input { padding-right: 45px; } 
-        .toggle-password { position: absolute; right: 10px; top: 10px; background: none; border: none; color: #b9bbbe; cursor: pointer; font-size: 16px; width: auto !important; padding: 0 !important; margin: 0 !important; }
+        .toggle-password { position: absolute; right: 10px; top: 10px; background: none; border: none; color: #b9bbbe; cursor: pointer; font-size: 16px; }
 
-        /* チャット画面のベース設定 */
-        #chat-page { 
-            display: none; 
-            background-color: var(--bg-color);
-            flex-direction: column !important; /* 絶対に縦並びにする命令 */
-            position: relative;
-        }
-        #messages { 
-            list-style-type: none; 
-            margin: 0; 
-            overflow-y: auto; 
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            -webkit-overflow-scrolling: touch;
-        }
-        .message-wrapper { display: flex; flex-direction: column; }
+        /* Discord風2ペイン・チャット画面全体の構造 */
+        #chat-page { display: none; background-color: var(--bg-color); width: 100%; height: 100%; position: absolute; top: 0; left: 0; }
+        
+        /* サイドバー */
+        .sidebar { background: var(--sidebar-color); display: flex; flex-direction: column; border-right: 1px solid #222; }
+        .sidebar-header { padding: 15px; border-bottom: 1px solid #222; display: flex; align-items: center; gap: 10px; }
+        .my-avatar { font-size: 1.5rem; }
+        .my-name { font-weight: bold; color: #fff; font-size: 1.1rem; overflow: hidden; text-overflow: ellipsis; }
+        .sidebar-scroll { flex-grow: 1; overflow-y: auto; padding: 15px 10px; }
+        .sidebar-section-title { font-size: 0.75rem; color: #666; text-transform: uppercase; letter-spacing: 1px; margin: 15px 0 5px 5px; }
+        .sidebar-item { padding: 10px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 10px; margin-bottom: 4px; color: #aaa; transition: all 0.2s; }
+        .sidebar-item:hover, .sidebar-item.active { background: rgba(0, 243, 255, 0.1); color: var(--neon-cyan); border: 1px solid rgba(0, 243, 255, 0.3); }
+        .sidebar-item.active { text-shadow: 0 0 5px var(--neon-cyan); }
+        .sidebar-footer { padding: 10px; border-top: 1px solid #222; }
+        .logout-btn { width: 100%; padding: 8px; background: transparent; border: 1px solid var(--neon-magenta); color: var(--neon-magenta); border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .logout-btn:hover { background: var(--neon-magenta); color: #fff; box-shadow: 0 0 10px var(--neon-magenta); }
+
+        /* メインチャットエリア */
+        .chat-main { flex-grow: 1; display: flex; flex-direction: column; background: var(--panel-color); }
+        .chat-header { height: 55px; border-bottom: 1px solid #222; display: flex; align-items: center; padding: 0 20px; background: var(--sidebar-color); font-weight: bold; color: #fff; font-size: 1.1rem; gap: 15px; }
+        .menu-toggle-btn { display: none; background: transparent; border: none; color: var(--neon-cyan); font-size: 1.5rem; cursor: pointer; }
+        
+        #messages { list-style-type: none; margin: 0; padding: 20px; overflow-y: auto; flex-grow: 1; display: flex; flex-direction: column; gap: 12px; -webkit-overflow-scrolling: touch; }
+        .message-wrapper { display: flex; flex-direction: column; max-width: 75%; }
         .message-wrapper.self { align-self: flex-end; align-items: flex-end; }
-        .message-wrapper.self .msg-content { background-color: rgba(255, 0, 119, 0.1); border: 1px solid var(--neon-magenta); color: #fff; border-bottom-right-radius: 2px; }
+        .message-wrapper.self .msg-content { background-color: rgba(255, 0, 119, 0.1); border: 1px solid var(--neon-magenta); color: #fff; box-shadow: 0 0 8px rgba(255, 0, 119, 0.15); border-bottom-right-radius: 2px; }
         .message-wrapper.other { align-self: flex-start; align-items: flex-start; }
-        .message-wrapper.other .msg-content { background-color: rgba(0, 243, 255, 0.1); border: 1px solid var(--neon-cyan); color: #fff; border-bottom-left-radius: 2px; }
-        .user-name { font-size: 0.75rem; color: #888; margin-bottom: 2px; padding: 0 4px; font-weight: bold; }
+        .message-wrapper.other .msg-content { background-color: rgba(0, 243, 255, 0.1); border: 1px solid var(--neon-cyan); color: #fff; box-shadow: 0 0 8px rgba(0, 243, 255, 0.15); border-bottom-left-radius: 2px; }
+        .user-name { font-size: 0.8rem; color: #888; margin-bottom: 2px; padding: 0 4px; font-weight: bold; }
         .msg-content { padding: 10px 14px; border-radius: 14px; font-size: 0.95rem; word-break: break-all; line-height: 1.4; }
         .timestamp { font-size: 0.7rem; color: #555; margin-top: 3px; padding: 0 4px; }
 
-        #form { 
-            background: #11131c; 
-            display: flex; 
-            border-top: 1px solid #222;
-            align-items: center;
-            width: 100%;
-        }
-        #input { 
-            border: none; background: #0b0c10; color: white; border: 1px solid #1f2833; font-size: 16px; flex-grow: 1;
-        }
-        #input:focus { outline: none; border-color: var(--neon-cyan); box-shadow: 0 0 10px rgba(0, 243, 255, 0.5); }
-        #form > button { 
-            background: transparent; border: 2px solid var(--neon-cyan); color: var(--neon-cyan); cursor: pointer; font-weight: bold; text-shadow: 0 0 5px var(--neon-cyan); transition: all 0.3s ease;
-        }
+        #form { background: #11131c; padding: 15px; display: flex; box-sizing: border-box; border-top: 1px solid #222; align-items: center; gap: 10px; }
+        #input { border: none; padding: 12px; background: #0b0c10; color: white; border: 1px solid #1f2833; font-size: 16px; flex-grow: 1; border-radius: 8px; }
+        #input:focus { outline: none; border-color: var(--neon-cyan); box-shadow: 0 0 10px rgba(0, 243, 255, 0.4); }
+        #form > button { background: transparent; border: 2px solid var(--neon-cyan); padding: 10px 20px; border-radius: 8px; color: var(--neon-cyan); cursor: pointer; font-weight: bold; text-shadow: 0 0 5px var(--neon-cyan); font-size: 16px; }
         #form > button:hover { background-color: var(--neon-cyan); color: #000; box-shadow: 0 0 15px var(--neon-cyan); }
 
-
         /* ==========================================
-           パソコン用レイアウト (横幅769px以上)
+           パソコン用配置（横幅769px以上）
            ========================================== */
         @media screen and (min-width: 769px) {
-            #chat-page { 
-                width: 80%;            
-                max-width: 900px;
-                height: 85vh;          
-                border: 2px solid var(--neon-cyan);
-                box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
-                border-radius: 12px;
-            }
-            #messages { padding: 25px; flex-grow: 1; }
-            .message-wrapper { max-width: 70%; }
-            #form { padding: 15px; height: 4.5rem; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px; gap: 12px; }
-            #input { padding: 12px 18px; border-radius: 8px; }
-            #form > button { padding: 10px 25px; border-radius: 8px; font-size: 16px; height: 100%; }
+            #chat-page { width: 90%; max-width: 1100px; height: 85vh; border: 2px solid var(--neon-cyan); box-shadow: 0 0 20px rgba(0, 243, 255, 0.3); border-radius: 12px; top: 7.5vh; left: 5%; flex-direction: row !important; }
+            .sidebar { width: 260px; height: 100%; border-top-left-radius: 10px; border-bottom-left-radius: 10px; }
+            .chat-main { height: 100%; border-top-right-radius: 10px; border-bottom-right-radius: 10px; }
         }
 
-
         /* ==========================================
-           スマホ用レイアウト (横幅768px以下)
+           スマホ用配置（横幅768px以下）
            ========================================== */
         @media screen and (max-width: 768px) {
-            #chat-page { 
-                width: 100%;           
-                height: 100%;          
-                position: absolute;    
-                top: 0; left: 0;
-                border: none; box-shadow: none; border-radius: 0;
-            }
-            #messages { padding: 15px; flex-grow: 1; }
-            .message-wrapper { max-width: 85%; }
-            #form { padding: 10px; height: 4rem; gap: 8px; }
-            #input { padding: 10px; border-radius: 8px; }
-            #form > button { padding: 10px 18px; border-radius: 8px; font-size: 15px; height: 100%; }
+            #chat-page { width: 100%; height: 100%; top: 0; left: 0; flex-direction: row !important; }
+            .menu-toggle-btn { display: block; }
+            .sidebar { position: absolute; top: 55px; left: -260px; width: 260px; height: calc(100% - 55px); z-index: 100; transition: left 0.3s ease; border-right: 2px solid var(--neon-cyan); }
+            .sidebar.open { left: 0; }
+            .chat-main { width: 100%; height: 100%; }
         }
     </style>
 </head>
@@ -192,42 +114,74 @@
             <button type="button" class="toggle-password" id="eye-btn" onclick="togglePasswordVisibility()">👁</button>
         </div>
 
+        <div id="avatar-selector" style="display: none; text-align: left; margin-bottom: 15px;">
+            <label style="color: #666; font-size: 0.8rem; display: block; margin-bottom: 5px; padding-left: 2px;">アイコン選択</label>
+            <select id="avatar-select">
+                <option value="👾">👾 サイバーコア</option>
+                <option value="💀">💀 ネオゴースト</option>
+                <option value="🥷">🥷 プレイヤースーツ</option>
+                <option value="🦊">🦊 レーザーフォックス</option>
+                <option value="🐉">🐉 ネオドラゴン</option>
+                <option value="⚡">⚡ ボルト</option>
+                <option value="🔥">🔥 フレア</option>
+            </select>
+        </div>
+
         <button id="main-btn" onclick="handleSubmit()">ログイン</button>
         <button id="switch-btn" class="switch-btn" onclick="toggleMode()">新しくアカウントを作る</button>
     </div>
 
     <div id="chat-page">
-        <ul id="messages"></ul>
-        <form id="form" action="">
-          <input id="input" autocomplete="off" placeholder="メッセージを送信" /><button>送信</button>
-        </form>
+        <div id="sidebar" class="sidebar">
+            <div class="sidebar-header">
+                <div id="my-avatar" class="my-avatar">👾</div>
+                <div id="my-name" class="my-name">ユーザー名</div>
+            </div>
+            <div class="sidebar-scroll">
+                <div class="sidebar-section-title">チャンネル</div>
+                <div id="room-all" class="sidebar-item active" onclick="switchRoom('all')">💬 全体チャット</div>
+                
+                <div class="sidebar-section-title">ダイレクトメッセージ</div>
+                <div id="user-list">
+                    </div>
+            </div>
+            <div class="sidebar-footer">
+                <button class="logout-btn" onclick="logout()">ログアウト</button>
+            </div>
+        </div>
+
+        <div class="chat-main">
+            <div class="chat-header">
+                <button class="menu-toggle-btn" onclick="toggleSidebar()">☰</button>
+                <span id="chat-title-text">💬 全体チャット</span>
+            </div>
+            <ul id="messages"></ul>
+            <form id="form" action="">
+              <input id="input" autocomplete="off" placeholder="メッセージを送信" /><button>送信</button>
+            </form>
+        </div>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
         let isLoginMode = true;
         let myUsername = "";
+        let currentRoom = "all"; // 現在開いているチャット先 ('all' または '相手のユーザー名')
+        let allMessages = [];    // サーバーから取得した全過去ログの保持用
+        let socket;
 
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 const splash = document.getElementById('splash-screen');
-                if (splash) {
-                    splash.style.opacity = '0';
-                    setTimeout(() => splash.remove(), 500);
-                }
+                if (splash) { splash.style.opacity = '0'; setTimeout(() => splash.remove(), 500); }
             }, 2000);
         });
 
         function togglePasswordVisibility() {
             const passwordInput = document.getElementById('password');
             const eyeBtn = document.getElementById('eye-btn');
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                eyeBtn.textContent = '❌';
-            } else {
-                passwordInput.type = 'password';
-                eyeBtn.textContent = '👁';
-            }
+            if (passwordInput.type === 'password') { passwordInput.type = 'text'; eyeBtn.textContent = '❌'; }
+            else { passwordInput.type = 'password'; eyeBtn.textContent = '👁'; }
         }
 
         window.onload = function() {
@@ -244,17 +198,34 @@
             document.getElementById('auth-title').textContent = isLoginMode ? 'ログイン' : 'アカウント作成';
             document.getElementById('main-btn').textContent = isLoginMode ? 'ログイン' : '登録する';
             document.getElementById('switch-btn').textContent = isLoginMode ? '新しくアカウントを作る' : 'ログイン画面に戻る';
+            document.getElementById('avatar-selector').style.display = isLoginMode ? 'none' : 'block';
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        function logout() {
+            localStorage.removeItem('doumei_token');
+            localStorage.removeItem('doumei_user');
+            localStorage.removeItem('doumei_avatar');
+            location.reload(); // リロードして初期化
         }
 
         async function handleSubmit() {
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const avatar = document.getElementById('avatar-select').value;
             const url = isLoginMode ? '/login' : '/register';
+
+            if(!username || !password) return alert('入力欄が空欄だよ');
+
+            const bodyData = isLoginMode ? { username, password } : { username, password, avatar };
 
             const response = await fetch(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password })
+                body: JSON.stringify(bodyData)
             });
             const data = await response.json();
 
@@ -263,6 +234,7 @@
                     myUsername = username;
                     localStorage.setItem('doumei_token', data.token);
                     localStorage.setItem('doumei_user', username);
+                    localStorage.setItem('doumei_avatar', data.avatar);
                     showChatPage(data.token);
                 } else {
                     alert('アカウントを作ったよ！ログインしてね。');
@@ -273,59 +245,127 @@
             }
         }
 
-        function showChatPage(token) {
+        async function showChatPage(token) {
             document.getElementById('auth-page').style.display = 'none';
-            
-            const chatPage = document.getElementById('chat-page');
-            chatPage.style.display = 'flex';
-            
-            // 【原因の完全修正】JSから直接「縦並び」を強制適用する（最高優先度）
-            chatPage.style.flexDirection = 'column';
+            document.getElementById('chat-page').style.display = 'flex';
 
-            const socket = io({ auth: { token: token } });
+            // サイドバーに自分のプロフィールを設定
+            document.getElementById('my-name').textContent = myUsername;
+            document.getElementById('my-avatar').textContent = localStorage.getItem('doumei_avatar') || '👾';
+
+            // 1. サーバーから過去ログを一括取得
+            const msgRes = await fetch('/messages');
+            allMessages = await msgRes.json();
+
+            // 2. サーバーから全登録ユーザーを取得してサイドバーへ生成
+            const userRes = await fetch('/users');
+            const userList = await userRes.json();
+            buildUserSidebar(userList);
+
+            // 初期表示を全体チャットにセット
+            switchRoom('all');
+
+            // 通信接続
+            socket = io({ auth: { token: token } });
 
             const form = document.getElementById('form');
             const input = document.getElementById('input');
-            const messages = document.getElementById('messages');
 
             form.onsubmit = (e) => {
                 e.preventDefault();
-                if (input.value) {
-                    socket.emit('chat message', input.value);
+                if (input.value.trim()) {
+                    // 送信データを拡張 { to: ルーム名, msg: 本文 }
+                    socket.emit('chat message', { to: currentRoom, msg: input.value.trim() });
                     input.value = '';
                 }
             };
 
             socket.on('chat message', (data) => {
-                const wrapper = document.createElement('li');
-                wrapper.classList.add('message-wrapper');
-                
-                if (data.username === myUsername) {
-                    wrapper.classList.add('self');
-                } else {
-                    wrapper.classList.add('other');
-                    const nameSpan = document.createElement('span');
-                    nameSpan.classList.add('user-name');
-                    nameSpan.textContent = data.username;
-                    wrapper.appendChild(nameSpan);
+                allMessages.push(data); // 履歴データに追加
+                // 受信したメッセージが現在開いているチャット画面の条件と一致する場合のみ描画する
+                if (currentRoom === 'all' && data.to === 'all') {
+                    renderSingleMessage(data);
+                } else if (currentRoom !== 'all' && data.to !== 'all') {
+                    if ((data.from === myUsername && data.to === currentRoom) || (data.from === currentRoom && data.to === myUsername)) {
+                        renderSingleMessage(data);
+                    }
                 }
-
-                const contentDiv = document.createElement('div');
-                contentDiv.classList.add('msg-content');
-                contentDiv.textContent = data.msg;
-                wrapper.appendChild(contentDiv);
-
-                const timeDiv = document.createElement('div');
-                timeDiv.classList.add('timestamp');
-                const now = new Date();
-                const hours = String(now.getHours()).padStart(2, '0');
-                const minutes = String(now.getMinutes()).padStart(2, '0');
-                timeDiv.textContent = `${hours}:${minutes}`;
-                wrapper.appendChild(timeDiv);
-
-                messages.appendChild(wrapper);
-                messages.scrollTop = messages.scrollHeight;
             });
+        }
+
+        function buildUserSidebar(users) {
+            const listDiv = document.getElementById('user-list');
+            listDiv.innerHTML = '';
+            users.forEach(user => {
+                if(user.username === myUsername) return; // 自分自身はDMリストに除外
+                
+                const item = document.createElement('div');
+                item.id = `room-${user.username}`;
+                item.classList.add('sidebar-item');
+                item.innerHTML = `<span>${user.avatar}</span> <span>${user.username}</span>`;
+                item.onclick = () => { switchRoom(user.username); document.getElementById('sidebar').classList.remove('open'); };
+                listDiv.appendChild(item);
+            });
+        }
+
+        function switchRoom(roomName) {
+            currentRoom = roomName;
+
+            // サイドバーのアクティブ表示切り替え
+            document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+            const targetItem = document.getElementById(`room-${roomName}`);
+            if (targetItem) targetItem.classList.add('active');
+
+            // ヘッダータイトルの書き換え
+            document.getElementById('chat-title-text').textContent = roomName === 'all' ? '💬 全体チャット' : `👤 ${roomName} とのDM`;
+
+            // 表示エリアをクリアし、合致する過去ログだけを再描画
+            const messages = document.getElementById('messages');
+            messages.innerHTML = '';
+
+            allMessages.forEach(data => {
+                if (roomName === 'all' && data.to === 'all') {
+                    renderSingleMessage(data);
+                } else if (roomName !== 'all' && data.to !== 'all') {
+                    if ((data.from === myUsername && data.to === roomName) || (data.from === roomName && data.to === myUsername)) {
+                        renderSingleMessage(data);
+                    }
+                }
+            });
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        function renderSingleMessage(data) {
+            const messages = document.getElementById('messages');
+            const wrapper = document.createElement('li');
+            wrapper.classList.add('message-wrapper');
+            
+            if (data.from === myUsername) {
+                wrapper.classList.add('self');
+            } else {
+                wrapper.classList.add('other');
+                const nameSpan = document.createElement('span');
+                nameSpan.classList.add('user-name');
+                nameSpan.textContent = `${data.avatar} ${data.from}`;
+                wrapper.appendChild(nameSpan);
+            }
+
+            const contentDiv = document.createElement('div');
+            contentDiv.classList.add('msg-content');
+            contentDiv.textContent = data.msg;
+            wrapper.appendChild(contentDiv);
+
+            const timeDiv = document.createElement('div');
+            timeDiv.classList.add('timestamp');
+            
+            const msgDate = data.time ? new Date(data.time) : new Date();
+            const hours = String(msgDate.getHours()).padStart(2, '0');
+            const minutes = String(msgDate.getMinutes()).padStart(2, '0');
+            timeDiv.textContent = `${hours}:${minutes}`;
+            wrapper.appendChild(timeDiv);
+
+            messages.appendChild(wrapper);
+            messages.scrollTop = messages.scrollHeight;
         }
     </script>
 </body>
