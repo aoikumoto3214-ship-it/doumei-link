@@ -2,6 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>同盟 Link</title>
 
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -10,7 +11,9 @@
     <meta name="mobile-web-app-capable" content="yes">
 
     <style>
-        /* ゲーミング・ネオンデザインのベース設定 */
+        /* ==========================================
+           1. 全共通のベース設定（ネオンカラー・フォントなど）
+           ========================================== */
         :root {
             --bg-color: #0d0e15;
             --panel-color: #161925;
@@ -25,13 +28,17 @@
             padding: 0;
         }
 
-        body { 
-            margin: 0; 
-            font-family: sans-serif; 
+        html, body {
+            height: 100%;
+            width: 100%;
             background: var(--bg-color); 
-            color: var(--text-color); 
+            color: var(--text-color);
+            font-family: sans-serif;
+            overflow: hidden;
+        }
+
+        body { 
             display: flex; 
-            height: 100vh; 
             align-items: center; 
             justify-content: center; 
         }
@@ -52,7 +59,7 @@
         }
 
         .neon-logo {
-            font-size: 3rem;
+            font-size: 2.5rem;
             font-weight: bold;
             color: #fff;
             text-transform: uppercase;
@@ -70,32 +77,45 @@
             }
         }
 
-        /* ログイン・アカウント作成画面のネオン見た目 */
+        /* ログイン・アカウント作成画面 */
         .auth-container { 
             background: var(--panel-color); 
-            padding: 40px; 
+            padding: 30px 20px; 
             border-radius: 8px; 
             border: 2px solid var(--neon-magenta);
             box-shadow: 0 0 15px rgba(255, 0, 119, 0.3); 
-            width: 320px; 
+            width: 90%;
+            max-width: 340px; 
             text-align: center; 
+            z-index: 10;
         }
         .auth-container h2 { margin-bottom: 20px; color: white; text-shadow: 0 0 8px var(--neon-magenta); }
-        .auth-container input { width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 4px; border: 1px solid #1f2833; background: #0b0c10; color: white; box-sizing: border-box; }
+        .auth-container input { 
+            width: 100%; 
+            padding: 12px; 
+            margin-bottom: 15px; 
+            border-radius: 4px; 
+            border: 1px solid #1f2833; 
+            background: #0b0c10; 
+            color: white; 
+            box-sizing: border-box; 
+            font-size: 16px;
+        }
         .auth-container input:focus { border-color: var(--neon-cyan); box-shadow: 0 0 10px rgba(0, 243, 255, 0.5); outline: none; }
         
         .auth-container button#main-btn { 
             width: 100%; 
-            padding: 10px; 
+            padding: 12px; 
             background: transparent; 
             border: 2px solid var(--neon-cyan); 
             border-radius: 4px; 
             color: var(--neon-cyan); 
             font-weight: bold; 
             cursor: pointer; 
-            margin-bottom: 10px; 
+            margin-bottom: 15px; 
             text-shadow: 0 0 5px var(--neon-cyan);
             box-shadow: 0 0 5px rgba(0, 243, 255, 0.2);
+            font-size: 16px;
             transition: all 0.3s ease;
         }
         .auth-container button#main-btn:hover {
@@ -105,38 +125,61 @@
         }
         .auth-container .switch-btn { background: none; color: var(--neon-cyan); font-size: 14px; cursor: pointer; border: none; }
 
-        /* パスワード入力欄の設定 */
         .password-wrap { position: relative; width: 100%; }
         .password-wrap input { padding-right: 45px; } 
-        .toggle-password { position: absolute; right: 10px; top: 8px; background: none; border: none; color: #b9bbbe; cursor: pointer; font-size: 16px; width: auto !important; padding: 5px !important; margin: 0 !important; }
+        .toggle-password { position: absolute; right: 10px; top: 10px; background: none; border: none; color: #b9bbbe; cursor: pointer; font-size: 16px; width: auto !important; padding: 0 !important; margin: 0 !important; }
 
-        /* チャット画面の見た目 */
+
+        /* ==========================================
+           2. 共通のチャット部品設定（文字サイズや発光など）
+           ========================================== */
         #chat-page { 
             display: none; 
-            width: 100%; 
-            height: 100%; 
-            flex-direction: column; 
-            justify-content: flex-end; 
             background-color: var(--bg-color);
         }
+        #messages { 
+            list-style-type: none; 
+            margin: 0; 
+            overflow-y: auto; 
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            -webkit-overflow-scrolling: touch;
+        }
+        .message-wrapper { display: flex; flex-direction: column; }
+        .message-wrapper.self { align-self: flex-end; align-items: flex-end; }
+        .message-wrapper.self .msg-content {
+            background-color: rgba(255, 0, 119, 0.1);
+            border: 1px solid var(--neon-magenta);
+            color: #fff;
+            box-shadow: 0 0 8px rgba(255, 0, 119, 0.2);
+            border-bottom-right-radius: 2px;
+        }
+        .message-wrapper.other { align-self: flex-start; align-items: flex-start; }
+        .message-wrapper.other .msg-content {
+            background-color: rgba(0, 243, 255, 0.1);
+            border: 1px solid var(--neon-cyan);
+            color: #fff;
+            box-shadow: 0 0 8px rgba(0, 243, 255, 0.2);
+            border-bottom-left-radius: 2px;
+        }
+        .user-name { font-size: 0.75rem; color: #888; margin-bottom: 2px; padding: 0 4px; font-weight: bold; }
+        .msg-content { padding: 10px 14px; border-radius: 14px; font-size: 0.95rem; word-break: break-all; line-height: 1.4; }
+        .timestamp { font-size: 0.7rem; color: #555; margin-top: 3px; padding: 0 4px; }
+
         #form { 
-            background: #0d0e15; 
-            padding: 0.5rem; 
+            background: #11131c; 
             display: flex; 
-            height: 4rem; 
             box-sizing: border-box; 
-            width: 100%; 
             border-top: 1px solid #222;
-            gap: 10px;
+            align-items: center;
         }
         #input { 
             border: none; 
-            padding: 0 1rem; 
-            flex-grow: 1; 
-            border-radius: 8px; 
             background: #0b0c10; 
             color: white; 
             border: 1px solid #1f2833; 
+            font-size: 16px;
         }
         #input:focus { 
             outline: none; 
@@ -146,8 +189,6 @@
         #form > button { 
             background: transparent; 
             border: 2px solid var(--neon-cyan); 
-            padding: 0 1.5rem; 
-            border-radius: 4px; 
             color: var(--neon-cyan); 
             cursor: pointer; 
             font-weight: bold; 
@@ -160,55 +201,84 @@
             box-shadow: 0 0 15px var(--neon-cyan);
         }
 
-        /* 吹き出し構造の最適化 */
-        #messages { 
-            list-style-type: none; 
-            margin: 0; 
-            padding: 20px; 
-            overflow-y: auto; 
-            flex-grow: 1; 
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        
-        /* 吹き出しのベースラッピング */
-        .message-wrapper {
-            display: flex;
-            flex-direction: column;
-            max-width: 70%;
-        }
-        
-        /* 自分の吹き出し配置とネオン装飾（マゼンタ） */
-        .message-wrapper.self {
-            align-self: flex-end;
-            align-items: flex-end;
-        }
-        .message-wrapper.self .msg-content {
-            background-color: rgba(255, 0, 119, 0.1);
-            border: 1px solid var(--neon-magenta);
-            color: #fff;
-            box-shadow: 0 0 8px rgba(255, 0, 119, 0.2);
-            border-bottom-right-radius: 2px;
+
+        /* ==========================================
+           3. パソコン用レイアウト (画面の横幅が769px以上の場合)
+           ========================================== */
+        @media screen and (min-width: 769px) {
+            #chat-page { 
+                width: 80%;            /* 画面中央に幅を制限して配置 */
+                max-width: 900px;
+                height: 85vh;          /* 高さを少し抑えてウィンドウ風にする */
+                border: 2px solid var(--neon-cyan);
+                box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+                border-radius: 12px;
+                position: relative;
+            }
+            #messages { 
+                padding: 25px; 
+                flex-grow: 1;
+            }
+            .message-wrapper {
+                max-width: 70%;        /* PCは大画面なので吹き出しの最大幅を70%に制限 */
+            }
+            #form { 
+                padding: 15px; 
+                height: 4.5rem;
+                border-bottom-left-radius: 10px;
+                border-bottom-right-radius: 10px;
+                gap: 12px;
+            }
+            #input { 
+                padding: 12px 18px; 
+                border-radius: 8px; 
+            }
+            #form > button { 
+                padding: 10px 25px; 
+                border-radius: 8px; 
+                font-size: 16px;
+                height: 100%;
+            }
         }
 
-        /* 他人の吹き出し配置とネオン装飾（シアン） */
-        .message-wrapper.other {
-            align-self: flex-start;
-            align-items: flex-start;
-        }
-        .message-wrapper.other .msg-content {
-            background-color: rgba(0, 243, 255, 0.1);
-            border: 1px solid var(--neon-cyan);
-            color: #fff;
-            box-shadow: 0 0 8px rgba(0, 243, 255, 0.2);
-            border-bottom-left-radius: 2px;
-        }
 
-        /* ユーザー名とメッセージテキスト、時間の配置 */
-        .user-name { font-size: 0.8rem; color: #888; margin-bottom: 3px; padding: 0 5px; font-weight: bold; }
-        .msg-content { padding: 10px 15px; border-radius: 14px; font-size: 0.95rem; word-break: break-all; }
-        .timestamp { font-size: 0.75rem; color: #555; margin-top: 4px; padding: 0 5px; }
+        /* ==========================================
+           4. スマホ用レイアウト (画面の横幅が768px以下の場合)
+           ========================================== */
+        @media screen and (max-width: 768px) {
+            #chat-page { 
+                width: 100%;           /* 画面の横幅いっぱいに広げる */
+                height: 100%;          /* 画面の縦幅いっぱいに広げる */
+                position: absolute;    /* キーボード表示時のズレを防ぐため絶対配置 */
+                top: 0;
+                left: 0;
+                border: none;
+                box-shadow: none;
+                border-radius: 0;
+            }
+            #messages { 
+                padding: 15px; 
+                flex-grow: 1;
+            }
+            .message-wrapper {
+                max-width: 85%;        /* スマホは画面幅が狭いため、吹き出し幅を85%まで広げて見やすく */
+            }
+            #form { 
+                padding: 10px; 
+                height: 4rem;
+                gap: 8px;
+            }
+            #input { 
+                padding: 10px; 
+                border-radius: 8px; 
+            }
+            #form > button { 
+                padding: 10px 18px; 
+                border-radius: 8px; 
+                font-size: 15px;
+                height: 100%;
+            }
+        }
     </style>
 </head>
 <body>
@@ -219,7 +289,7 @@
 
     <div id="auth-page" class="auth-container">
         <h2 id="auth-title">ログイン</h2>
-        <input id="username" type="text" placeholder="ユーザー名" />
+        <input id="username" type="text" placeholder="ユーザー名" autofocus />
         
         <div class="password-wrap">
             <input id="password" type="password" placeholder="パスワード" />
@@ -240,9 +310,9 @@
     <script src="/socket.io/socket.io.js"></script>
     <script>
         let isLoginMode = true;
-        let myUsername = ""; // 自分の名前を保持する変数
+        let myUsername = "";
 
-        // 起動時ロゴを2秒表示したあとフェードアウトして消去する
+        // 起動時ロゴ演出
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 const splash = document.getElementById('splash-screen');
@@ -270,7 +340,7 @@
             const token = localStorage.getItem('doumei_token');
             const savedUser = localStorage.getItem('doumei_user');
             if (token && savedUser) {
-                myUsername = savedUser; // 保存されたユーザー名を復元
+                myUsername = savedUser;
                 showChatPage(token);
             }
         };
@@ -296,9 +366,9 @@
 
             if (data.success) {
                 if (isLoginMode) {
-                    myUsername = username; // 自分の名前をセット
+                    myUsername = username;
                     localStorage.setItem('doumei_token', data.token);
-                    localStorage.setItem('doumei_user', username); // ユーザー名も保存
+                    localStorage.setItem('doumei_user', username);
                     showChatPage(data.token);
                 } else {
                     alert('アカウントを作ったよ！ログインしてね。');
@@ -311,8 +381,9 @@
 
         function showChatPage(token) {
             document.getElementById('auth-page').style.display = 'none';
-            document.getElementById('chat-page').style.display = 'flex';
-            document.body.style.alignItems = 'stretch';
+            
+            const chatPage = document.getElementById('chat-page');
+            chatPage.style.display = 'flex';
 
             const socket = io({ auth: { token: token } });
 
@@ -329,29 +400,24 @@
             };
 
             socket.on('chat message', (data) => {
-                // メッセージを包むラッパー要素の作成
                 const wrapper = document.createElement('li');
                 wrapper.classList.add('message-wrapper');
                 
-                // 自分か他人かでクラスを分岐
                 if (data.username === myUsername) {
                     wrapper.classList.add('self');
                 } else {
                     wrapper.classList.add('other');
-                    // 他人の場合のみ上にユーザー名を表示
                     const nameSpan = document.createElement('span');
                     nameSpan.classList.add('user-name');
                     nameSpan.textContent = data.username;
                     wrapper.appendChild(nameSpan);
                 }
 
-                // 吹き出し（メッセージ本文）の作成
                 const contentDiv = document.createElement('div');
                 contentDiv.classList.add('msg-content');
                 contentDiv.textContent = data.msg;
                 wrapper.appendChild(contentDiv);
 
-                // 送信時間の作成（メッセージ受信時の現在時刻を生成）
                 const timeDiv = document.createElement('div');
                 timeDiv.classList.add('timestamp');
                 const now = new Date();
