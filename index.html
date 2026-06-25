@@ -10,33 +10,212 @@
     <meta name="mobile-web-app-capable" content="yes">
 
     <style>
-        /* Discord風のカッコいいダークモード設定 */
-        body { margin: 0; font-family: sans-serif; background: #36393f; color: #dcddde; display: flex; height: 100vh; align-items: center; justify-content: center; }
-        
-        /* ログイン画面の見た目 */
-        .auth-container { background: #2f3136; padding: 40px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); width: 320px; text-align: center; }
-        .auth-container h2 { margin-bottom: 20px; color: white; }
-        .auth-container input { width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 4px; border: 1px solid #202225; background: #202225; color: white; box-sizing: border-box; }
-        .auth-container button { width: 100%; padding: 10px; background: #5865f2; border: none; border-radius: 4px; color: white; font-weight: bold; cursor: pointer; margin-bottom: 10px; }
-        .auth-container .switch-btn { background: none; color: #00aff4; font-size: 14px; cursor: pointer; border: none; }
+        /* ゲーミング・ネオンデザインのベース設定 */
+        :root {
+            --bg-color: #0d0e15;
+            --panel-color: #161925;
+            --neon-cyan: #00f3ff;
+            --neon-magenta: #ff0077;
+            --text-color: #e0e6ed;
+        }
 
-        /* パスワード入力欄とボタンを横並びにする設定 */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body { 
+            margin: 0; 
+            font-family: sans-serif; 
+            background: var(--bg-color); 
+            color: var(--text-color); 
+            display: flex; 
+            height: 100vh; 
+            align-items: center; 
+            justify-content: center; 
+        }
+        
+        /* 起動時のロゴアニメーション画面 */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        .neon-logo {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px var(--neon-cyan), 0 0 40px var(--neon-cyan), 0 0 80px var(--neon-cyan);
+            animation: flicker 2s infinite alternate;
+        }
+
+        @keyframes flicker {
+            0%, 18%, 22%, 25%, 53%, 57%, 100% {
+                text-shadow: 0 0 4px #fff, 0 0 11px #fff, 0 0 19px var(--neon-cyan), 0 0 40px var(--neon-cyan), 0 0 80px var(--neon-cyan);
+            }
+            20%, 24%, 55% {        
+                text-shadow: none;
+            }
+        }
+
+        /* ログイン・アカウント作成画面のネオン見た目 */
+        .auth-container { 
+            background: var(--panel-color); 
+            padding: 40px; 
+            border-radius: 8px; 
+            border: 2px solid var(--neon-magenta);
+            box-shadow: 0 0 15px rgba(255, 0, 119, 0.3); 
+            width: 320px; 
+            text-align: center; 
+        }
+        .auth-container h2 { margin-bottom: 20px; color: white; text-shadow: 0 0 8px var(--neon-magenta); }
+        .auth-container input { width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 4px; border: 1px solid #1f2833; background: #0b0c10; color: white; box-sizing: border-box; }
+        .auth-container input:focus { border-color: var(--neon-cyan); box-shadow: 0 0 10px rgba(0, 243, 255, 0.5); outline: none; }
+        
+        .auth-container button#main-btn { 
+            width: 100%; 
+            padding: 10px; 
+            background: transparent; 
+            border: 2px solid var(--neon-cyan); 
+            border-radius: 4px; 
+            color: var(--neon-cyan); 
+            font-weight: bold; 
+            cursor: pointer; 
+            margin-bottom: 10px; 
+            text-shadow: 0 0 5px var(--neon-cyan);
+            box-shadow: 0 0 5px rgba(0, 243, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        .auth-container button#main-btn:hover {
+            background-color: var(--neon-cyan);
+            color: #000;
+            box-shadow: 0 0 15px var(--neon-cyan);
+        }
+        .auth-container .switch-btn { background: none; color: var(--neon-cyan); font-size: 14px; cursor: pointer; border: none; }
+
+        /* パスワード入力欄の設定 */
         .password-wrap { position: relative; width: 100%; }
         .password-wrap input { padding-right: 45px; } 
         .toggle-password { position: absolute; right: 10px; top: 8px; background: none; border: none; color: #b9bbbe; cursor: pointer; font-size: 16px; width: auto !important; padding: 5px !important; margin: 0 !important; }
 
         /* チャット画面の見た目 */
-        #chat-page { display: none; width: 100%; height: 100%; flex-direction: column; justify-content: flex-end; }
-        #form { background: #40444b; padding: 0.25rem; display: flex; height: 3rem; box-sizing: border-box; width: 100%; }
-        #input { border: none; padding: 0 1rem; flex-grow: 1; border-radius: 8px; margin: 0.25rem; background: #40444b; color: white; border: 1px solid #202225; }
-        #input:focus { outline: none; }
-        #form > button { background: #5865f2; border: none; padding: 0 1rem; margin: 0.25rem; border-radius: 4px; color: white; cursor: pointer; font-weight: bold; }
-        #messages { list-style-type: none; margin: 0; padding: 10px; overflow-y: auto; flex-grow: 1; }
-        #messages > li { padding: 0.5rem 1rem; background: #32353b; margin-bottom: 5px; border-radius: 5px; }
-        .user-name { font-weight: bold; color: #fff; margin-right: 10px; }
+        #chat-page { 
+            display: none; 
+            width: 100%; 
+            height: 100%; 
+            flex-direction: column; 
+            justify-content: flex-end; 
+            background-color: var(--bg-color);
+        }
+        #form { 
+            background: #0d0e15; 
+            padding: 0.5rem; 
+            display: flex; 
+            height: 4rem; 
+            box-sizing: border-box; 
+            width: 100%; 
+            border-top: 1px solid #222;
+            gap: 10px;
+        }
+        #input { 
+            border: none; 
+            padding: 0 1rem; 
+            flex-grow: 1; 
+            border-radius: 8px; 
+            background: #0b0c10; 
+            color: white; 
+            border: 1px solid #1f2833; 
+        }
+        #input:focus { 
+            outline: none; 
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+        }
+        #form > button { 
+            background: transparent; 
+            border: 2px solid var(--neon-cyan); 
+            padding: 0 1.5rem; 
+            border-radius: 4px; 
+            color: var(--neon-cyan); 
+            cursor: pointer; 
+            font-weight: bold; 
+            text-shadow: 0 0 5px var(--neon-cyan);
+            transition: all 0.3s ease;
+        }
+        #form > button:hover {
+            background-color: var(--neon-cyan);
+            color: #000;
+            box-shadow: 0 0 15px var(--neon-cyan);
+        }
+
+        /* 吹き出し構造の最適化 */
+        #messages { 
+            list-style-type: none; 
+            margin: 0; 
+            padding: 20px; 
+            overflow-y: auto; 
+            flex-grow: 1; 
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        /* 吹き出しのベースラッピング */
+        .message-wrapper {
+            display: flex;
+            flex-direction: column;
+            max-width: 70%;
+        }
+        
+        /* 自分の吹き出し配置とネオン装飾（マゼンタ） */
+        .message-wrapper.self {
+            align-self: flex-end;
+            align-items: flex-end;
+        }
+        .message-wrapper.self .msg-content {
+            background-color: rgba(255, 0, 119, 0.1);
+            border: 1px solid var(--neon-magenta);
+            color: #fff;
+            box-shadow: 0 0 8px rgba(255, 0, 119, 0.2);
+            border-bottom-right-radius: 2px;
+        }
+
+        /* 他人の吹き出し配置とネオン装飾（シアン） */
+        .message-wrapper.other {
+            align-self: flex-start;
+            align-items: flex-start;
+        }
+        .message-wrapper.other .msg-content {
+            background-color: rgba(0, 243, 255, 0.1);
+            border: 1px solid var(--neon-cyan);
+            color: #fff;
+            box-shadow: 0 0 8px rgba(0, 243, 255, 0.2);
+            border-bottom-left-radius: 2px;
+        }
+
+        /* ユーザー名とメッセージテキスト、時間の配置 */
+        .user-name { font-size: 0.8rem; color: #888; margin-bottom: 3px; padding: 0 5px; font-weight: bold; }
+        .msg-content { padding: 10px 15px; border-radius: 14px; font-size: 0.95rem; word-break: break-all; }
+        .timestamp { font-size: 0.75rem; color: #555; margin-top: 4px; padding: 0 5px; }
     </style>
 </head>
 <body>
+
+    <div id="splash-screen">
+        <div class="neon-logo">同盟 Link</div>
+    </div>
 
     <div id="auth-page" class="auth-container">
         <h2 id="auth-title">ログイン</h2>
@@ -61,6 +240,18 @@
     <script src="/socket.io/socket.io.js"></script>
     <script>
         let isLoginMode = true;
+        let myUsername = ""; // 自分の名前を保持する変数
+
+        // 起動時ロゴを2秒表示したあとフェードアウトして消去する
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                if (splash) {
+                    splash.style.opacity = '0';
+                    setTimeout(() => splash.remove(), 500);
+                }
+            }, 2000);
+        });
 
         function togglePasswordVisibility() {
             const passwordInput = document.getElementById('password');
@@ -77,7 +268,9 @@
 
         window.onload = function() {
             const token = localStorage.getItem('doumei_token');
-            if (token) {
+            const savedUser = localStorage.getItem('doumei_user');
+            if (token && savedUser) {
+                myUsername = savedUser; // 保存されたユーザー名を復元
                 showChatPage(token);
             }
         };
@@ -103,7 +296,9 @@
 
             if (data.success) {
                 if (isLoginMode) {
+                    myUsername = username; // 自分の名前をセット
                     localStorage.setItem('doumei_token', data.token);
+                    localStorage.setItem('doumei_user', username); // ユーザー名も保存
                     showChatPage(data.token);
                 } else {
                     alert('アカウントを作ったよ！ログインしてね。');
@@ -134,9 +329,38 @@
             };
 
             socket.on('chat message', (data) => {
-                const item = document.createElement('li');
-                item.innerHTML = `<span class="user-name">${data.username}:</span> ${data.msg}`;
-                messages.appendChild(item);
+                // メッセージを包むラッパー要素の作成
+                const wrapper = document.createElement('li');
+                wrapper.classList.add('message-wrapper');
+                
+                // 自分か他人かでクラスを分岐
+                if (data.username === myUsername) {
+                    wrapper.classList.add('self');
+                } else {
+                    wrapper.classList.add('other');
+                    // 他人の場合のみ上にユーザー名を表示
+                    const nameSpan = document.createElement('span');
+                    nameSpan.classList.add('user-name');
+                    nameSpan.textContent = data.username;
+                    wrapper.appendChild(nameSpan);
+                }
+
+                // 吹き出し（メッセージ本文）の作成
+                const contentDiv = document.createElement('div');
+                contentDiv.classList.add('msg-content');
+                contentDiv.textContent = data.msg;
+                wrapper.appendChild(contentDiv);
+
+                // 送信時間の作成（メッセージ受信時の現在時刻を生成）
+                const timeDiv = document.createElement('div');
+                timeDiv.classList.add('timestamp');
+                const now = new Date();
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                timeDiv.textContent = `${hours}:${minutes}`;
+                wrapper.appendChild(timeDiv);
+
+                messages.appendChild(wrapper);
                 messages.scrollTop = messages.scrollHeight;
             });
         }
