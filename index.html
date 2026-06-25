@@ -11,9 +11,6 @@
     <meta name="mobile-web-app-capable" content="yes">
 
     <style>
-        /* ==========================================
-           1. 全共通のベース設定（ネオンカラー・フォントなど）
-           ========================================== */
         :root {
             --bg-color: #0d0e15;
             --panel-color: #161925;
@@ -43,7 +40,6 @@
             justify-content: center; 
         }
         
-        /* 起動時のロゴアニメーション画面 */
         #splash-screen {
             position: fixed;
             top: 0;
@@ -69,15 +65,10 @@
         }
 
         @keyframes flicker {
-            0%, 18%, 22%, 25%, 53%, 57%, 100% {
-                text-shadow: 0 0 4px #fff, 0 0 11px #fff, 0 0 19px var(--neon-cyan), 0 0 40px var(--neon-cyan), 0 0 80px var(--neon-cyan);
-            }
-            20%, 24%, 55% {        
-                text-shadow: none;
-            }
+            0%, 18%, 22%, 25%, 53%, 57%, 100% { text-shadow: 0 0 4px #fff, 0 0 11px #fff, 0 0 19px var(--neon-cyan), 0 0 40px var(--neon-cyan), 0 0 80px var(--neon-cyan); }
+            20%, 24%, 55% { text-shadow: none; }
         }
 
-        /* ログイン・アカウント作成画面 */
         .auth-container { 
             background: var(--panel-color); 
             padding: 30px 20px; 
@@ -91,51 +82,26 @@
         }
         .auth-container h2 { margin-bottom: 20px; color: white; text-shadow: 0 0 8px var(--neon-magenta); }
         .auth-container input { 
-            width: 100%; 
-            padding: 12px; 
-            margin-bottom: 15px; 
-            border-radius: 4px; 
-            border: 1px solid #1f2833; 
-            background: #0b0c10; 
-            color: white; 
-            box-sizing: border-box; 
-            font-size: 16px;
+            width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 4px; border: 1px solid #1f2833; background: #0b0c10; color: white; font-size: 16px;
         }
         .auth-container input:focus { border-color: var(--neon-cyan); box-shadow: 0 0 10px rgba(0, 243, 255, 0.5); outline: none; }
         
         .auth-container button#main-btn { 
-            width: 100%; 
-            padding: 12px; 
-            background: transparent; 
-            border: 2px solid var(--neon-cyan); 
-            border-radius: 4px; 
-            color: var(--neon-cyan); 
-            font-weight: bold; 
-            cursor: pointer; 
-            margin-bottom: 15px; 
-            text-shadow: 0 0 5px var(--neon-cyan);
-            box-shadow: 0 0 5px rgba(0, 243, 255, 0.2);
-            font-size: 16px;
-            transition: all 0.3s ease;
+            width: 100%; padding: 12px; background: transparent; border: 2px solid var(--neon-cyan); border-radius: 4px; color: var(--neon-cyan); font-weight: bold; cursor: pointer; margin-bottom: 15px; text-shadow: 0 0 5px var(--neon-cyan); box-shadow: 0 0 5px rgba(0, 243, 255, 0.2); font-size: 16px; transition: all 0.3s ease;
         }
-        .auth-container button#main-btn:hover {
-            background-color: var(--neon-cyan);
-            color: #000;
-            box-shadow: 0 0 15px var(--neon-cyan);
-        }
+        .auth-container button#main-btn:hover { background-color: var(--neon-cyan); color: #000; box-shadow: 0 0 15px var(--neon-cyan); }
         .auth-container .switch-btn { background: none; color: var(--neon-cyan); font-size: 14px; cursor: pointer; border: none; }
 
         .password-wrap { position: relative; width: 100%; }
         .password-wrap input { padding-right: 45px; } 
         .toggle-password { position: absolute; right: 10px; top: 10px; background: none; border: none; color: #b9bbbe; cursor: pointer; font-size: 16px; width: auto !important; padding: 0 !important; margin: 0 !important; }
 
-
-        /* ==========================================
-           2. 共通のチャット部品設定（文字サイズや発光など）
-           ========================================== */
+        /* チャット画面のベース設定 */
         #chat-page { 
             display: none; 
             background-color: var(--bg-color);
+            flex-direction: column !important; /* 絶対に縦並びにする命令 */
+            position: relative;
         }
         #messages { 
             list-style-type: none; 
@@ -148,21 +114,9 @@
         }
         .message-wrapper { display: flex; flex-direction: column; }
         .message-wrapper.self { align-self: flex-end; align-items: flex-end; }
-        .message-wrapper.self .msg-content {
-            background-color: rgba(255, 0, 119, 0.1);
-            border: 1px solid var(--neon-magenta);
-            color: #fff;
-            box-shadow: 0 0 8px rgba(255, 0, 119, 0.2);
-            border-bottom-right-radius: 2px;
-        }
+        .message-wrapper.self .msg-content { background-color: rgba(255, 0, 119, 0.1); border: 1px solid var(--neon-magenta); color: #fff; border-bottom-right-radius: 2px; }
         .message-wrapper.other { align-self: flex-start; align-items: flex-start; }
-        .message-wrapper.other .msg-content {
-            background-color: rgba(0, 243, 255, 0.1);
-            border: 1px solid var(--neon-cyan);
-            color: #fff;
-            box-shadow: 0 0 8px rgba(0, 243, 255, 0.2);
-            border-bottom-left-radius: 2px;
-        }
+        .message-wrapper.other .msg-content { background-color: rgba(0, 243, 255, 0.1); border: 1px solid var(--neon-cyan); color: #fff; border-bottom-left-radius: 2px; }
         .user-name { font-size: 0.75rem; color: #888; margin-bottom: 2px; padding: 0 4px; font-weight: bold; }
         .msg-content { padding: 10px 14px; border-radius: 14px; font-size: 0.95rem; word-break: break-all; line-height: 1.4; }
         .timestamp { font-size: 0.7rem; color: #555; margin-top: 3px; padding: 0 4px; }
@@ -170,114 +124,56 @@
         #form { 
             background: #11131c; 
             display: flex; 
-            box-sizing: border-box; 
             border-top: 1px solid #222;
             align-items: center;
+            width: 100%;
         }
         #input { 
-            border: none; 
-            background: #0b0c10; 
-            color: white; 
-            border: 1px solid #1f2833; 
-            font-size: 16px;
+            border: none; background: #0b0c10; color: white; border: 1px solid #1f2833; font-size: 16px; flex-grow: 1;
         }
-        #input:focus { 
-            outline: none; 
-            border-color: var(--neon-cyan);
-            box-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
-        }
+        #input:focus { outline: none; border-color: var(--neon-cyan); box-shadow: 0 0 10px rgba(0, 243, 255, 0.5); }
         #form > button { 
-            background: transparent; 
-            border: 2px solid var(--neon-cyan); 
-            color: var(--neon-cyan); 
-            cursor: pointer; 
-            font-weight: bold; 
-            text-shadow: 0 0 5px var(--neon-cyan);
-            transition: all 0.3s ease;
+            background: transparent; border: 2px solid var(--neon-cyan); color: var(--neon-cyan); cursor: pointer; font-weight: bold; text-shadow: 0 0 5px var(--neon-cyan); transition: all 0.3s ease;
         }
-        #form > button:hover {
-            background-color: var(--neon-cyan);
-            color: #000;
-            box-shadow: 0 0 15px var(--neon-cyan);
-        }
+        #form > button:hover { background-color: var(--neon-cyan); color: #000; box-shadow: 0 0 15px var(--neon-cyan); }
 
 
         /* ==========================================
-           3. パソコン用レイアウト (画面の横幅が769px以上の場合)
+           パソコン用レイアウト (横幅769px以上)
            ========================================== */
         @media screen and (min-width: 769px) {
             #chat-page { 
-                width: 80%;            /* 画面中央に幅を制限して配置 */
+                width: 80%;            
                 max-width: 900px;
-                height: 85vh;          /* 高さを少し抑えてウィンドウ風にする */
+                height: 85vh;          
                 border: 2px solid var(--neon-cyan);
                 box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
                 border-radius: 12px;
-                position: relative;
             }
-            #messages { 
-                padding: 25px; 
-                flex-grow: 1;
-            }
-            .message-wrapper {
-                max-width: 70%;        /* PCは大画面なので吹き出しの最大幅を70%に制限 */
-            }
-            #form { 
-                padding: 15px; 
-                height: 4.5rem;
-                border-bottom-left-radius: 10px;
-                border-bottom-right-radius: 10px;
-                gap: 12px;
-            }
-            #input { 
-                padding: 12px 18px; 
-                border-radius: 8px; 
-            }
-            #form > button { 
-                padding: 10px 25px; 
-                border-radius: 8px; 
-                font-size: 16px;
-                height: 100%;
-            }
+            #messages { padding: 25px; flex-grow: 1; }
+            .message-wrapper { max-width: 70%; }
+            #form { padding: 15px; height: 4.5rem; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px; gap: 12px; }
+            #input { padding: 12px 18px; border-radius: 8px; }
+            #form > button { padding: 10px 25px; border-radius: 8px; font-size: 16px; height: 100%; }
         }
 
 
         /* ==========================================
-           4. スマホ用レイアウト (画面の横幅が768px以下の場合)
+           スマホ用レイアウト (横幅768px以下)
            ========================================== */
         @media screen and (max-width: 768px) {
             #chat-page { 
-                width: 100%;           /* 画面の横幅いっぱいに広げる */
-                height: 100%;          /* 画面の縦幅いっぱいに広げる */
-                position: absolute;    /* キーボード表示時のズレを防ぐため絶対配置 */
-                top: 0;
-                left: 0;
-                border: none;
-                box-shadow: none;
-                border-radius: 0;
+                width: 100%;           
+                height: 100%;          
+                position: absolute;    
+                top: 0; left: 0;
+                border: none; box-shadow: none; border-radius: 0;
             }
-            #messages { 
-                padding: 15px; 
-                flex-grow: 1;
-            }
-            .message-wrapper {
-                max-width: 85%;        /* スマホは画面幅が狭いため、吹き出し幅を85%まで広げて見やすく */
-            }
-            #form { 
-                padding: 10px; 
-                height: 4rem;
-                gap: 8px;
-            }
-            #input { 
-                padding: 10px; 
-                border-radius: 8px; 
-            }
-            #form > button { 
-                padding: 10px 18px; 
-                border-radius: 8px; 
-                font-size: 15px;
-                height: 100%;
-            }
+            #messages { padding: 15px; flex-grow: 1; }
+            .message-wrapper { max-width: 85%; }
+            #form { padding: 10px; height: 4rem; gap: 8px; }
+            #input { padding: 10px; border-radius: 8px; }
+            #form > button { padding: 10px 18px; border-radius: 8px; font-size: 15px; height: 100%; }
         }
     </style>
 </head>
@@ -312,7 +208,6 @@
         let isLoginMode = true;
         let myUsername = "";
 
-        // 起動時ロゴ演出
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 const splash = document.getElementById('splash-screen');
@@ -326,7 +221,6 @@
         function togglePasswordVisibility() {
             const passwordInput = document.getElementById('password');
             const eyeBtn = document.getElementById('eye-btn');
-            
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';
                 eyeBtn.textContent = '❌';
@@ -384,6 +278,9 @@
             
             const chatPage = document.getElementById('chat-page');
             chatPage.style.display = 'flex';
+            
+            // 【原因の完全修正】JSから直接「縦並び」を強制適用する（最高優先度）
+            chatPage.style.flexDirection = 'column';
 
             const socket = io({ auth: { token: token } });
 
