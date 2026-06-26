@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
     <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="icon.png" type="image/png">
     <link rel="apple-touch-icon" href="icon.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -325,7 +326,7 @@
             
             const chatPage = document.getElementById('chat-page');
             chatPage.style.display = 'flex';
-            chatPage.style.flexDirection = 'column'; // 強制縦並びの制御保持
+            chatPage.style.flexDirection = 'column';
 
             document.getElementById('my-name').textContent = myUsername;
             document.getElementById('my-avatar').textContent = localStorage.getItem('doumei_avatar') || '👾';
@@ -355,7 +356,6 @@
             socket.on('chat message', (data) => {
                 allMessages.push(data);
                 
-                // 自分が送信したメッセージではない場合にのみ通知音をトリガー
                 if (data.from !== myUsername) playNotificationSound();
 
                 if (currentRoom === 'all' && data.to === 'all') {
@@ -368,7 +368,6 @@
             });
         }
 
-        // Web Audio APIを用いた、外部音源ファイル不要の通知音生成システム
         function playNotificationSound() {
             if (!isSoundEnabled) return;
             try {
