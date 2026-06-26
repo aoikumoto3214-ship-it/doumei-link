@@ -3,14 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
     <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="同盟 Link">
     <meta name="mobile-web-app-capable" content="yes">
+    
     <title>同盟 Link</title>
 
     <style>
+        /* ==========================================
+           1. 全共通のベース設定（ネオンカラー・フォントなど）
+           ========================================== */
         :root {
             --bg-color: #0d0e15;
             --panel-color: #161925;
@@ -24,10 +30,12 @@
         html, body { height: 100%; width: 100%; background: var(--bg-color); color: var(--text-color); font-family: sans-serif; overflow: hidden; }
         body { display: flex; align-items: center; justify-content: center; }
         
+        /* 起動時のロゴアニメーション画面 */
         #splash-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--bg-color); display: flex; justify-content: center; align-items: center; z-index: 9999; transition: opacity 0.5s ease; }
         .neon-logo { font-size: 2.5rem; font-weight: bold; color: #fff; text-transform: uppercase; letter-spacing: 4px; text-shadow: 0 0 5px #fff, 0 0 20px var(--neon-cyan), 0 0 40px var(--neon-cyan); animation: flicker 2s infinite alternate; }
         @keyframes flicker { 0%, 100% { text-shadow: 0 0 4px #fff, 0 0 19px var(--neon-cyan), 0 0 40px var(--neon-cyan); } 20%, 24% { text-shadow: none; } }
 
+        /* ログイン・登録コンテナ */
         .auth-container { background: var(--panel-color); padding: 30px 20px; border-radius: 8px; border: 2px solid var(--neon-magenta); box-shadow: 0 0 15px rgba(255, 0, 119, 0.3); width: 90%; max-width: 340px; text-align: center; z-index: 10; }
         .auth-container h2 { margin-bottom: 20px; color: white; text-shadow: 0 0 8px var(--neon-magenta); }
         .auth-container input, .auth-container select { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 4px; border: 1px solid #1f2833; background: #0b0c10; color: white; font-size: 16px; }
@@ -39,49 +47,56 @@
         .password-wrap input { padding-right: 45px; } 
         .toggle-password { position: absolute; right: 10px; top: 10px; background: none; border: none; color: #b9bbbe; cursor: pointer; font-size: 16px; }
 
+        /* Discord風チャット画面全体の構造 */
         #chat-page { display: none; background-color: var(--bg-color); width: 100%; height: 100%; position: absolute; top: 0; left: 0; }
         
+        /* サイドバー */
         .sidebar { background: var(--sidebar-color); display: flex; flex-direction: column; border-right: 1px solid #222; }
-        .sidebar-header { padding: 15px; border-bottom: 1px solid #222; display: flex; align-items: center; justify-content: space-between; }
+        .sidebar-header { padding: 15px; border-bottom: 1px solid #222; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
         .profile-info { display: flex; align-items: center; gap: 10px; overflow: hidden; }
         .my-avatar { font-size: 1.5rem; }
         .my-name { font-weight: bold; color: #fff; font-size: 1.1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .settings-btn { background: transparent; border: none; color: #888; cursor: pointer; font-size: 1.2rem; transition: color 0.3s; }
-        .settings-btn:hover { color: var(--neon-cyan); }
+        .settings-btn { background: transparent; border: none; color: #888; cursor: pointer; font-size: 1.2rem; transition: color 0.3s; padding: 5px; }
+        .settings-btn:hover { color: var(--neon-cyan); text-shadow: 0 0 5px var(--neon-cyan); }
         
         .sidebar-scroll { flex-grow: 1; overflow-y: auto; padding: 15px 10px; }
         .sidebar-section-title { font-size: 0.75rem; color: #666; text-transform: uppercase; letter-spacing: 1px; margin: 15px 0 5px 5px; }
-        .sidebar-item { padding: 10px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 10px; margin-bottom: 4px; color: #aaa; transition: all 0.2s; }
+        .sidebar-item { padding: 10px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 10px; margin-bottom: 4px; color: #aaa; transition: all 0.2s; border: 1px solid transparent; }
         .sidebar-item:hover, .sidebar-item.active { background: rgba(0, 243, 255, 0.1); color: var(--neon-cyan); border: 1px solid rgba(0, 243, 255, 0.3); }
+        .sidebar-item.active { text-shadow: 0 0 5px var(--neon-cyan); font-weight: bold; }
         .sidebar-footer { padding: 10px; border-top: 1px solid #222; }
-        .logout-btn { width: 100%; padding: 8px; background: transparent; border: 1px solid var(--neon-magenta); color: var(--neon-magenta); border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .logout-btn { width: 100%; padding: 8px; background: transparent; border: 1px solid var(--neon-magenta); color: var(--neon-magenta); border-radius: 4px; cursor: pointer; font-weight: bold; transition: all 0.3s; }
+        .logout-btn:hover { background: var(--neon-magenta); color: #fff; box-shadow: 0 0 10px var(--neon-magenta); }
 
+        /* メインチャットエリア */
         .chat-main { flex-grow: 1; display: flex; flex-direction: column; background: var(--panel-color); }
         .chat-header { height: 55px; border-bottom: 1px solid #222; display: flex; align-items: center; padding: 0 20px; background: var(--sidebar-color); font-weight: bold; color: #fff; font-size: 1.1rem; gap: 15px; }
         .menu-toggle-btn { display: none; background: transparent; border: none; color: var(--neon-cyan); font-size: 1.5rem; cursor: pointer; }
         
+        /* 吹き出しの配置構造 */
         #messages { list-style-type: none; margin: 0; padding: 20px; overflow-y: auto; flex-grow: 1; display: flex; flex-direction: column; gap: 12px; -webkit-overflow-scrolling: touch; }
         .message-wrapper { display: flex; flex-direction: column; max-width: 75%; }
         .message-wrapper.self { align-self: flex-end; align-items: flex-end; }
-        .message-wrapper.self .msg-content { background-color: rgba(255, 0, 119, 0.1); border: 1px solid var(--neon-magenta); color: #fff; border-bottom-right-radius: 2px; }
+        .message-wrapper.self .msg-content { background-color: rgba(255, 0, 119, 0.1); border: 1px solid var(--neon-magenta); color: #fff; box-shadow: 0 0 8px rgba(255, 0, 119, 0.15); border-bottom-right-radius: 2px; }
         .message-wrapper.other { align-self: flex-start; align-items: flex-start; }
-        .message-wrapper.other .msg-content { background-color: rgba(0, 243, 255, 0.1); border: 1px solid var(--neon-cyan); color: #fff; border-bottom-left-radius: 2px; }
+        .message-wrapper.other .msg-content { background-color: rgba(0, 243, 255, 0.1); border: 1px solid var(--neon-cyan); color: #fff; box-shadow: 0 0 8px rgba(0, 243, 255, 0.15); border-bottom-left-radius: 2px; }
         .user-name { font-size: 0.8rem; color: #888; margin-bottom: 2px; padding: 0 4px; font-weight: bold; }
         .msg-content { padding: 10px 14px; border-radius: 14px; font-size: 0.95rem; word-break: break-all; line-height: 1.4; }
         .timestamp { font-size: 0.7rem; color: #555; margin-top: 3px; padding: 0 4px; }
 
-        #form { background: #11131c; padding: 15px; display: flex; border-top: 1px solid #222; align-items: center; gap: 10px; }
+        #form { background: #11131c; padding: 15px; display: flex; border-top: 1px solid #222; align-items: center; gap: 10px; width: 100%; }
         #input { border: none; padding: 12px; background: #0b0c10; color: white; border: 1px solid #1f2833; font-size: 16px; flex-grow: 1; border-radius: 8px; }
         #input:focus { outline: none; border-color: var(--neon-cyan); box-shadow: 0 0 10px rgba(0, 243, 255, 0.4); }
-        #form > button { background: transparent; border: 2px solid var(--neon-cyan); padding: 10px 20px; border-radius: 8px; color: var(--neon-cyan); cursor: pointer; font-weight: bold; font-size: 16px; }
+        #form > button { background: transparent; border: 2px solid var(--neon-cyan); padding: 10px 20px; border-radius: 8px; color: var(--neon-cyan); cursor: pointer; font-weight: bold; text-shadow: 0 0 5px var(--neon-cyan); font-size: 16px; transition: all 0.3s; }
+        #form > button:hover { background-color: var(--neon-cyan); color: #000; box-shadow: 0 0 15px var(--neon-cyan); }
 
-        /* 設定モーダル画面 */
+        /* 設定モーダル構造 */
         #settings-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; }
-        .settings-content { background: var(--panel-color); padding: 25px; border-radius: 8px; border: 2px solid var(--neon-cyan); width: 90%; max-width: 350px; color: white; }
+        .settings-content { background: var(--panel-color); padding: 25px; border-radius: 8px; border: 2px solid var(--neon-cyan); width: 90%; max-width: 350px; color: white; box-shadow: 0 0 15px rgba(0, 243, 255, 0.2); }
         .settings-content h3 { margin-bottom: 20px; text-shadow: 0 0 5px var(--neon-cyan); text-align: center; }
         .settings-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         
-        /* トグルスイッチのネオンデザイン */
+        /* トグルスイッチのネオンデザイン設定 */
         .switch { position: relative; display: inline-block; width: 50px; height: 24px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #333; transition: .4s; border-radius: 24px; }
@@ -93,11 +108,18 @@
         .save-btn { background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 10px; width: 48%; border-radius: 4px; cursor: pointer; font-weight: bold; }
         .settings-actions { display: flex; justify-content: space-between; margin-top: 20px; }
 
+        /* ==========================================
+           3. パソコン用レイアウト (画面の横幅が769px以上の場合)
+           ========================================== */
         @media screen and (min-width: 769px) {
-            #chat-page { width: 90%; max-width: 1100px; height: 85vh; border: 2px solid var(--neon-cyan); box-shadow: 0 0 20px rgba(0, 243, 255, 0.3); border-radius: 12px; top: 7.5vh; left: 5%; flex-direction: row !important; }
+            #chat-page { width: 90%; max-width: 1100px; height: 85vh; border: 2px solid var(--neon-cyan); box-shadow: 0 0 20px rgba(0, 243, 255, 0.3); border-radius: 12px; flex-direction: row !important; }
             .sidebar { width: 260px; height: 100%; border-top-left-radius: 10px; border-bottom-left-radius: 10px; }
             .chat-main { height: 100%; border-top-right-radius: 10px; border-bottom-right-radius: 10px; }
         }
+
+        /* ==========================================
+           4. スマホ用レイアウト (画面の横幅が768px以下の場合)
+           ========================================== */
         @media screen and (max-width: 768px) {
             #chat-page { width: 100%; height: 100%; top: 0; left: 0; flex-direction: row !important; }
             .menu-toggle-btn { display: block; }
@@ -109,24 +131,32 @@
 </head>
 <body>
 
-    <div id="splash-screen"><div class="neon-logo">同盟 Link</div></div>
+    <div id="splash-screen">
+        <div class="neon-logo">同盟 Link</div>
+    </div>
 
     <div id="auth-page" class="auth-container">
         <h2 id="auth-title">ログイン</h2>
         <input id="username" type="text" placeholder="ユーザー名" autofocus />
+        
         <div class="password-wrap">
             <input id="password" type="password" placeholder="パスワード" />
             <button type="button" class="toggle-password" id="eye-btn" onclick="togglePasswordVisibility()">👁</button>
         </div>
+
         <div id="avatar-selector" style="display: none; text-align: left; margin-bottom: 15px;">
             <label style="color: #666; font-size: 0.8rem; display: block; margin-bottom: 5px;">アイコン選択</label>
             <select id="avatar-select">
-                <option value="👾">👾 サイバーコア</option><option value="💀">💀 ネオゴースト</option>
-                <option value="🥷">🥷 プレイヤースーツ</option><option value="🦊">🦊 レーザーフォックス</option>
-                <option value="🐉">🐉 ネオドラゴン</option><option value="⚡">⚡ ボルト</option>
+                <option value="👾">👾 サイバーコア</option>
+                <option value="💀">💀 ネオゴースト</option>
+                <option value="🥷">🥷 プレイヤースーツ</option>
+                <option value="🦊">🦊 レーザーフォックス</option>
+                <option value="🐉">🐉 ネオドラゴン</option>
+                <option value="⚡">⚡ ボルト</option>
                 <option value="🔥">🔥 フレア</option>
             </select>
         </div>
+
         <button id="main-btn" class="main-btn" onclick="handleSubmit()">ログイン</button>
         <button id="switch-btn" class="switch-btn" onclick="toggleMode()">新しくアカウントを作る</button>
     </div>
@@ -143,6 +173,7 @@
             <div class="sidebar-scroll">
                 <div class="sidebar-section-title">チャンネル</div>
                 <div id="room-all" class="sidebar-item active" onclick="switchRoom('all')">💬 全体チャット</div>
+                
                 <div class="sidebar-section-title">ダイレクトメッセージ</div>
                 <div id="user-list"></div>
             </div>
@@ -167,22 +198,25 @@
         <div class="settings-content">
             <h3>⚙️ アプリ設定</h3>
             
-            <div class="settings-row" style="flex-direction: column; align-items: flex-start; margin-bottom: 10px;">
+            <div class="settings-row" style="flex-direction: column; align-items: flex-start; margin-bottom: 10px; width:100%;">
                 <label style="color: #888; font-size: 0.8rem; margin-bottom: 5px;">名前の変更</label>
-                <input id="edit-username" type="text" style="width: 100%; padding: 10px; background: #0b0c10; color: white; border: 1px solid #1f2833; border-radius: 4px;">
+                <input id="edit-username" type="text">
             </div>
 
-            <div class="settings-row" style="flex-direction: column; align-items: flex-start;">
+            <div class="settings-row" style="flex-direction: column; align-items: flex-start; width:100%;">
                 <label style="color: #888; font-size: 0.8rem; margin-bottom: 5px;">アイコンの変更</label>
-                <select id="edit-avatar" style="width: 100%; padding: 10px; background: #0b0c10; color: white; border: 1px solid #1f2833; border-radius: 4px;">
-                    <option value="👾">👾 サイバーコア</option><option value="💀">💀 ネオゴースト</option>
-                    <option value="🥷">🥷 プレイヤースーツ</option><option value="🦊">🦊 レーザーフォックス</option>
-                    <option value="🐉">🐉 ネオドラゴン</option><option value="⚡">⚡ ボルト</option>
+                <select id="edit-avatar">
+                    <option value="👾">👾 サイバーコア</option>
+                    <option value="💀">💀 ネオゴースト</option>
+                    <option value="🥷">🥷 プレイヤースーツ</option>
+                    <option value="🦊">🦊 レーザーフォックス</option>
+                    <option value="🐉">🐉 ネオドラゴン</option>
+                    <option value="⚡">⚡ ボルト</option>
                     <option value="🔥">🔥 フレア</option>
                 </select>
             </div>
 
-            <div class="settings-row" style="margin-top: 20px;">
+            <div class="settings-row" style="margin-top: 20px; width:100%;">
                 <span style="font-weight: bold;">🔊 チャット通知音</span>
                 <label class="switch">
                     <input type="checkbox" id="sound-toggle" onchange="toggleSound()">
@@ -201,10 +235,10 @@
     <script>
         let isLoginMode = true;
         let myUsername = "";
-        let currentRoom = "all";
-        let allMessages = [];
+        let currentRoom = "all"; 
+        let allMessages = [];    
         let socket;
-        let isSoundEnabled = localStorage.getItem('doumei_sound') !== 'false'; // デフォルトON
+        let isSoundEnabled = localStorage.getItem('doumei_sound') !== 'false';
 
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
@@ -214,16 +248,24 @@
         });
 
         function togglePasswordVisibility() {
-            const pwd = document.getElementById('password');
-            const btn = document.getElementById('eye-btn');
-            if (pwd.type === 'password') { pwd.type = 'text'; btn.textContent = '❌'; }
-            else { pwd.type = 'password'; btn.textContent = '👁'; }
+            const passwordInput = document.getElementById('password');
+            const eyeBtn = document.getElementById('eye-btn');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeBtn.textContent = '❌';
+            } else {
+                passwordInput.type = 'password';
+                eyeBtn.textContent = '👁';
+            }
         }
 
         window.onload = function() {
             const token = localStorage.getItem('doumei_token');
             const savedUser = localStorage.getItem('doumei_user');
-            if (token && savedUser) { myUsername = savedUser; showChatPage(token); }
+            if (token && savedUser) {
+                myUsername = savedUser;
+                showChatPage(token);
+            }
         };
 
         function toggleMode() {
@@ -234,7 +276,9 @@
             document.getElementById('avatar-selector').style.display = isLoginMode ? 'none' : 'block';
         }
 
-        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
 
         function logout() {
             localStorage.removeItem('doumei_token');
@@ -252,8 +296,13 @@
             if(!username || !password) return alert('入力欄が空欄だよ');
 
             const bodyData = isLoginMode ? { username, password } : { username, password, avatar };
-            const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(bodyData) });
-            const data = await res.json();
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(bodyData)
+            });
+            const data = await response.json();
 
             if (data.success) {
                 if (isLoginMode) {
@@ -266,12 +315,17 @@
                     alert('アカウントを作ったよ！ログインしてね。');
                     toggleMode();
                 }
-            } else { alert(data.message); }
+            } else {
+                alert(data.message);
+            }
         }
 
         async function showChatPage(token) {
             document.getElementById('auth-page').style.display = 'none';
-            document.getElementById('chat-page').style.display = 'flex';
+            
+            const chatPage = document.getElementById('chat-page');
+            chatPage.style.display = 'flex';
+            chatPage.style.flexDirection = 'column'; // 強制縦並びの制御保持
 
             document.getElementById('my-name').textContent = myUsername;
             document.getElementById('my-avatar').textContent = localStorage.getItem('doumei_avatar') || '👾';
@@ -287,9 +341,11 @@
 
             socket = io({ auth: { token: token } });
 
-            document.getElementById('form').onsubmit = (e) => {
+            const form = document.getElementById('form');
+            const input = document.getElementById('input');
+
+            form.onsubmit = (e) => {
                 e.preventDefault();
-                const input = document.getElementById('input');
                 if (input.value.trim()) {
                     socket.emit('chat message', { to: currentRoom, msg: input.value.trim() });
                     input.value = '';
@@ -299,7 +355,7 @@
             socket.on('chat message', (data) => {
                 allMessages.push(data);
                 
-                // 通知音を鳴らす（自分が送信したものではない場合）
+                // 自分が送信したメッセージではない場合にのみ通知音をトリガー
                 if (data.from !== myUsername) playNotificationSound();
 
                 if (currentRoom === 'all' && data.to === 'all') {
@@ -312,7 +368,7 @@
             });
         }
 
-        // Web Audio API を用いたピコン♪という通知音生成（外部ファイル不要）
+        // Web Audio APIを用いた、外部音源ファイル不要の通知音生成システム
         function playNotificationSound() {
             if (!isSoundEnabled) return;
             try {
@@ -321,17 +377,17 @@
                 const gainNode = ctx.createGain();
                 
                 osc.type = 'sine';
-                osc.frequency.setValueAtTime(880, ctx.currentTime); // 880Hz (高いラ)
-                osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.1); // ピコッという短い変化
+                osc.frequency.setValueAtTime(880, ctx.currentTime); 
+                osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.1); 
                 
-                gainNode.gain.setValueAtTime(0.1, ctx.currentTime); // 音量を抑える
+                gainNode.gain.setValueAtTime(0.08, ctx.currentTime); 
                 gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
                 
                 osc.connect(gainNode);
                 gainNode.connect(ctx.destination);
                 osc.start();
-                osc.stop(ctx.currentTime + 0.15);
-            } catch (e) { console.error('Audio not supported'); }
+                osc.stop(ctx.currentTime + 0.12);
+            } catch (e) { console.error('Audio processing not supported'); }
         }
 
         function toggleSound() {
@@ -354,7 +410,7 @@
             const newUsername = document.getElementById('edit-username').value.trim();
             const newAvatar = document.getElementById('edit-avatar').value;
             
-            if (!newUsername) return alert('名前を空にはできないよ');
+            if (!newUsername) return alert('名前を空欄にはできないよ');
 
             const res = await fetch('/update-profile', {
                 method: 'POST',
@@ -364,12 +420,11 @@
             const data = await res.json();
 
             if (data.success) {
-                // 設定を保存して画面をリロードし、全データを読み込み直す
                 localStorage.setItem('doumei_token', data.token);
                 localStorage.setItem('doumei_user', data.token);
                 localStorage.setItem('doumei_avatar', data.avatar);
                 alert('プロフィールを更新したよ！');
-                location.reload();
+                location.reload(); 
             } else {
                 alert(data.message);
             }
@@ -379,7 +434,8 @@
             const listDiv = document.getElementById('user-list');
             listDiv.innerHTML = '';
             users.forEach(user => {
-                if(user.username === myUsername) return;
+                if(user.username === myUsername) return; 
+                
                 const item = document.createElement('div');
                 item.id = `room-${user.username}`;
                 item.classList.add('sidebar-item');
@@ -391,17 +447,23 @@
 
         function switchRoom(roomName) {
             currentRoom = roomName;
+
             document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
             const targetItem = document.getElementById(`room-${roomName}`);
             if (targetItem) targetItem.classList.add('active');
+
             document.getElementById('chat-title-text').textContent = roomName === 'all' ? '💬 全体チャット' : `👤 ${roomName} とのDM`;
 
             const messages = document.getElementById('messages');
             messages.innerHTML = '';
+
             allMessages.forEach(data => {
-                if (roomName === 'all' && data.to === 'all') renderSingleMessage(data);
-                else if (roomName !== 'all' && data.to !== 'all') {
-                    if ((data.from === myUsername && data.to === roomName) || (data.from === roomName && data.to === myUsername)) renderSingleMessage(data);
+                if (roomName === 'all' && data.to === 'all') {
+                    renderSingleMessage(data);
+                } else if (roomName !== 'all' && data.to !== 'all') {
+                    if ((data.from === myUsername && data.to === roomName) || (data.from === roomName && data.to === myUsername)) {
+                        renderSingleMessage(data);
+                    }
                 }
             });
             messages.scrollTop = messages.scrollHeight;
@@ -412,8 +474,9 @@
             const wrapper = document.createElement('li');
             wrapper.classList.add('message-wrapper');
             
-            if (data.from === myUsername) wrapper.classList.add('self');
-            else {
+            if (data.from === myUsername) {
+                wrapper.classList.add('self');
+            } else {
                 wrapper.classList.add('other');
                 const nameSpan = document.createElement('span');
                 nameSpan.classList.add('user-name');
@@ -428,6 +491,7 @@
 
             const timeDiv = document.createElement('div');
             timeDiv.classList.add('timestamp');
+            
             const msgDate = data.time ? new Date(data.time) : new Date();
             const hours = String(msgDate.getHours()).padStart(2, '0');
             const minutes = String(msgDate.getMinutes()).padStart(2, '0');
