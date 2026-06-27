@@ -101,7 +101,6 @@
         .settings-section { display: none; }
         .settings-section.active { display: block; }
         
-        /* 最前面に配置する確実な閉じるボタンのスタイル（Z-indexを100に指定） */
         .close-settings-btn { position: absolute; top: 20px; right: 20px; background: #202225; border: 2px solid #555; color: #ccc; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-weight: bold; display: flex; align-items: center; justify-content: center; z-index: 100; font-size: 16px; }
         .close-settings-btn:hover { border-color: white; color: white; background: #36393f; }
 
@@ -127,7 +126,6 @@
         input:checked + .switch-slider { background-color: var(--discord-green); }
         input:checked + .switch-slider:before { transform: translateX(20px); }
 
-        /* アクション用のネオン・Discord共通ボタン */
         .save-profile-btn { background: var(--discord-green); border: none; color: white; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: 10px; transition: background 0.2s; }
         .save-profile-btn:hover { background: #1f8b4c; }
 
@@ -545,8 +543,8 @@
                     btn.textContent = "🚫 通話を切断";
                     btn.classList.add('connected');
                 } catch (err) {
-                    console.error(err);
-                    alert("マイク接続に失敗しました。ブラウザのマイク権限を確認してね。");
+                    console.error("Agora通話接続エラー:", err);
+                    alert("マイク接続に失敗しました。他のアプリ（Discord等）がマイクを独占している可能性があります。");
                     btn.textContent = "🔊 通話に参加";
                     btn.classList.remove('connected');
                 }
@@ -567,9 +565,9 @@
 
         async function fetchDevices() {
             try {
-                // ブラウザ標準命令を使い、確実にデバイスへの仮アクセス権限とリストを呼び出す
-                const tempTrack = await AgoraRTC.createMicrophoneAudioTrack();
-                tempTrack.close();
+                // 修正箇所：ブラウザ標準命令で仮取得し、即座に手放すことでリストを安全に取得
+                const tempStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                tempStream.getTracks().forEach(track => track.stop());
 
                 const mics = await AgoraRTC.getMicrophones();
                 const speakers = await AgoraRTC.getPlaybackDevices();
@@ -590,11 +588,11 @@
                     spkSelect.appendChild(opt);
                 });
             } catch (e) {
-                console.error("デバイス取得エラー", e);
+                console.error("デバイスリスト取得エラー:", e);
             }
         }
 
-        // ▼ 修正：強制ポップアップ要求ロジックを組み込んだマイクテスト関数 ▼
+        // 修正箇所：権限取得後に確実にトラックを解放するマイクテスト処理
         async function toggleMicTest() {
             const btn = document.getElementById('mic-test-btn');
             const fill = document.getElementById('mic-meter-fill');
@@ -610,13 +608,18 @@
                 try {
                     btn.textContent = "接続中...";
                     
-                    // 【解決命令】ブラウザ標準の命令で権限要求のポップアップを強制的に発生させる
-                    await navigator.mediaDevices.getUserMedia({ audio: true });
+                    // 1. 強制的に権限を要求し、成功したら握ったマイクをすぐに離す
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    stream.getTracks().forEach(track => track.stop());
                     
+                    // 2. 許可された状態でリストを再取得（ここでMU900などの名前が取れるようになります）
+                    await fetchDevices();
+
                     const micId = document.getElementById('mic-select').value;
                     let trackConfig = {};
                     if(micId !== 'default' && micId !== '') trackConfig.microphoneId = micId;
                     
+                    // 3. Agoraシステムでマイクを起動
                     testAudioTrack = await AgoraRTC.createMicrophoneAudioTrack(trackConfig);
                     
                     btn.textContent = "テスト停止";
@@ -629,9 +632,8 @@
                         }
                     }, 100);
                 } catch(e) {
-                    console.error(e);
-                    // 過去にブロック済みのブラウザに具体的な解除手順を提示する
-                    alert("【マイクの許可が必要です】\nブラウザのURL入力欄の左側にある「鍵のマーク」または「丸にスライダーのマーク（設定）」をクリックし、マイクが『ブロック』や『オフ』になっていたら『許可』に変更して、ページを再読み込みしてください。");
+                    console.error("マイクテスト起動エラー:", e);
+                    alert("マイクが他のアプリ（Discordなど）で排他使用されているか、物理的に接続されていません。");
                     btn.textContent = "確認してみましょう";
                 }
             }
