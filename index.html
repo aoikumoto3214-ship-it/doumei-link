@@ -89,7 +89,7 @@
 
         /* ====== 設定モーダル群 ====== */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; }
-        .modal-content { background: var(--discord-gray); border-radius: 8px; width: 95%; max-width: 800px; color: white; display: flex; height: 85vh; overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+        .modal-content { background: var(--discord-gray); border-radius: 8px; width: 95%; max-width: 800px; color: white; display: flex; height: 85vh; overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,0.5); position: relative; }
         
         .settings-sidebar { width: 200px; background: var(--discord-gray); padding: 20px 10px; border-right: 1px solid #1e1f22; display: flex; flex-direction: column; z-index: 10; }
         .settings-tab { padding: 10px 15px; border-radius: 4px; cursor: pointer; color: #b5bac1; font-weight: bold; margin-bottom: 5px; transition: background 0.2s; }
@@ -544,7 +544,7 @@
                     btn.classList.add('connected');
                 } catch (err) {
                     console.error("Agora通話接続エラー:", err);
-                    alert("マイク接続に失敗しました。他のアプリ（Discord等）がマイクを独占している可能性があります。");
+                    alert("マイク接続に失敗しました。\n詳細: " + (err.message || "不明なエラー") + "\n※同盟Linkのタブを複数開いている場合は1つだけ残して閉じてください。");
                     btn.textContent = "🔊 通話に参加";
                     btn.classList.remove('connected');
                 }
@@ -563,36 +563,41 @@
             btn.classList.remove('connected');
         }
 
+        // ▼修正1：ネイティブAPIの無理な呼び出しを削除し、Agora標準機能だけで安全にリストを取得する
         async function fetchDevices() {
             try {
-                // 修正箇所：ブラウザ標準命令で仮取得し、即座に手放すことでリストを安全に取得
-                const tempStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                tempStream.getTracks().forEach(track => track.stop());
+                // 安全にマイクを一度起動し、すぐ閉じることでリストをアンロックする
+                const tempTrack = await AgoraRTC.createMicrophoneAudioTrack();
+                tempTrack.close();
 
                 const mics = await AgoraRTC.getMicrophones();
                 const speakers = await AgoraRTC.getPlaybackDevices();
 
                 const micSelect = document.getElementById('mic-select');
-                micSelect.innerHTML = '';
+                micSelect.innerHTML = '<option value="default">Default</option>';
                 mics.forEach(mic => {
-                    const opt = document.createElement('option');
-                    opt.value = mic.deviceId; opt.text = mic.label || '不明なマイク';
-                    micSelect.appendChild(opt);
+                    if (mic.deviceId !== 'default') {
+                        const opt = document.createElement('option');
+                        opt.value = mic.deviceId; opt.text = mic.label || 'マイク (' + mic.deviceId.slice(0,5) + '...)';
+                        micSelect.appendChild(opt);
+                    }
                 });
 
                 const spkSelect = document.getElementById('speaker-select');
-                spkSelect.innerHTML = '';
+                spkSelect.innerHTML = '<option value="default">Default</option>';
                 speakers.forEach(spk => {
-                    const opt = document.createElement('option');
-                    opt.value = spk.deviceId; opt.text = spk.label || '不明なスピーカー';
-                    spkSelect.appendChild(opt);
+                    if (spk.deviceId !== 'default') {
+                        const opt = document.createElement('option');
+                        opt.value = spk.deviceId; opt.text = spk.label || 'スピーカー (' + spk.deviceId.slice(0,5) + '...)';
+                        spkSelect.appendChild(opt);
+                    }
                 });
             } catch (e) {
                 console.error("デバイスリスト取得エラー:", e);
             }
         }
 
-        // 修正箇所：権限取得後に確実にトラックを解放するマイクテスト処理
+        // ▼修正2：マイクテストもネイティブAPIを排除し、Agoraにすべて任せることで衝突を防ぐ
         async function toggleMicTest() {
             const btn = document.getElementById('mic-test-btn');
             const fill = document.getElementById('mic-meter-fill');
@@ -608,18 +613,10 @@
                 try {
                     btn.textContent = "接続中...";
                     
-                    // 1. 強制的に権限を要求し、成功したら握ったマイクをすぐに離す
-                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                    stream.getTracks().forEach(track => track.stop());
-                    
-                    // 2. 許可された状態でリストを再取得（ここでMU900などの名前が取れるようになります）
-                    await fetchDevices();
-
                     const micId = document.getElementById('mic-select').value;
                     let trackConfig = {};
                     if(micId !== 'default' && micId !== '') trackConfig.microphoneId = micId;
                     
-                    // 3. Agoraシステムでマイクを起動
                     testAudioTrack = await AgoraRTC.createMicrophoneAudioTrack(trackConfig);
                     
                     btn.textContent = "テスト停止";
@@ -633,7 +630,8 @@
                     }, 100);
                 } catch(e) {
                     console.error("マイクテスト起動エラー:", e);
-                    alert("マイクが他のアプリ（Discordなど）で排他使用されているか、物理的に接続されていません。");
+                    // 実際のエラー名を出力して、原因を確実に特定できるようにする
+                    alert("マイク接続に失敗しました。\n詳細な原因: " + (e.message || e.name || "不明なエラー") + "\n\n※同盟Linkのタブを複数開いている場合は、1つだけ残して閉じてください。");
                     btn.textContent = "確認してみましょう";
                 }
             }
