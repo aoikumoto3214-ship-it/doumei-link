@@ -18,6 +18,7 @@
         :root {
             --bg-color: #0d0e15; --panel-color: #161925; --sidebar-color: #0f111a;
             --neon-cyan: #00f3ff; --neon-magenta: #ff0077; --text-color: #e0e6ed;
+            --discord-gray: #2b2d31; --discord-dark: #1e1f22; --discord-green: #23a559;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -55,7 +56,6 @@
         .sidebar-item:hover, .sidebar-item.active { background: rgba(0, 243, 255, 0.1); color: var(--neon-cyan); border: 1px solid rgba(0, 243, 255, 0.3); }
         .sidebar-item.active { text-shadow: 0 0 5px var(--neon-cyan); font-weight: bold; }
         
-        /* ボイチャ参加中のユーザーリスト枠のCSS */
         .vc-member-list { list-style: none; padding-left: 32px; margin-bottom: 8px; font-size: 0.9rem; color: #888; display: flex; flex-direction: column; gap: 6px; }
         .vc-member-item { display: flex; align-items: center; gap: 8px; animation: fadeIn 0.2s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-3px); } to { opacity: 1; transform: translateY(0); } }
@@ -87,49 +87,80 @@
         #input:focus { outline: none; border-color: var(--neon-cyan); box-shadow: 0 0 10px rgba(0, 243, 255, 0.4); }
         #form > button { background: transparent; border: 2px solid var(--neon-cyan); padding: 10px 20px; border-radius: 8px; color: var(--neon-cyan); cursor: pointer; font-weight: bold; text-shadow: 0 0 5px var(--neon-cyan); font-size: 16px; transition: all 0.3s; }
 
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; }
-        .modal-content { background: var(--panel-color); padding: 25px; border-radius: 8px; border: 2px solid var(--neon-cyan); width: 90%; max-width: 400px; color: white; box-shadow: 0 0 15px rgba(0, 243, 255, 0.2); max-height: 90vh; overflow-y: auto; }
-        .modal-content h3 { margin-bottom: 20px; text-shadow: 0 0 5px var(--neon-cyan); text-align: center; }
-        .settings-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; width: 100%; }
+        /* ====== 設定モーダル群 ====== */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-content { background: var(--discord-gray); border-radius: 8px; width: 95%; max-width: 800px; color: white; display: flex; height: 80vh; overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
         
-        .switch { position: relative; display: inline-block; width: 50px; height: 24px; }
+        /* 設定モーダル内のサイドバー */
+        .settings-sidebar { width: 200px; background: var(--discord-gray); padding: 20px 10px; border-right: 1px solid #1e1f22; display: flex; flex-direction: column; }
+        .settings-tab { padding: 10px 15px; border-radius: 4px; cursor: pointer; color: #b5bac1; font-weight: bold; margin-bottom: 5px; transition: background 0.2s; }
+        .settings-tab:hover { background: rgba(255,255,255,0.05); color: #fff; }
+        .settings-tab.active { background: rgba(255,255,255,0.1); color: #fff; }
+        
+        /* 設定モーダル内のメインエリア */
+        .settings-main { flex-grow: 1; background: var(--discord-gray); padding: 40px; overflow-y: auto; position: relative; }
+        .settings-main h3 { font-size: 1.2rem; margin-bottom: 25px; border-bottom: 1px solid #3f4147; padding-bottom: 10px; }
+        .settings-section { display: none; }
+        .settings-section.active { display: block; }
+        .close-settings-btn { position: absolute; top: 20px; right: 20px; background: transparent; border: 2px solid #555; color: #ccc; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-weight: bold; display: flex; align-items: center; justify-content: center; }
+        .close-settings-btn:hover { border-color: white; color: white; }
+
+        /* フォーム部品デザイン */
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 0.8rem; font-weight: bold; color: #b5bac1; margin-bottom: 8px; text-transform: uppercase; }
+        .form-group input[type="text"], .form-group select { width: 100%; padding: 10px; background: var(--discord-dark); color: white; border: none; border-radius: 4px; font-size: 0.95rem; }
+        .form-group input[type="text"]:focus, .form-group select:focus { outline: none; box-shadow: 0 0 0 2px var(--neon-cyan); }
+        
+        /* スライダー（音量・感度） */
+        .slider-container { display: flex; align-items: center; gap: 15px; }
+        input[type="range"] { flex-grow: 1; -webkit-appearance: none; background: #4f545c; height: 6px; border-radius: 3px; outline: none; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: white; cursor: pointer; }
+        
+        /* マイクテストバー */
+        .mic-test-wrap { display: flex; align-items: center; gap: 15px; margin-top: 15px; }
+        .mic-test-btn { background: var(--discord-gray); border: 1px solid #555; color: white; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-size: 0.9rem; transition: 0.2s; }
+        .mic-test-btn.testing { border-color: var(--discord-green); color: var(--discord-green); }
+        .mic-meter-bg { flex-grow: 1; background: var(--discord-dark); height: 10px; border-radius: 5px; overflow: hidden; }
+        .mic-meter-fill { width: 0%; height: 100%; background: var(--discord-green); transition: width 0.1s; }
+
+        /* スイッチ */
+        .switch { position: relative; display: inline-block; width: 40px; height: 20px; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #333; transition: .4s; border-radius: 24px; }
-        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: var(--neon-cyan); box-shadow: 0 0 10px var(--neon-cyan); }
-        input:checked + .slider:before { transform: translateX(26px); }
+        .switch-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #80848e; transition: .3s; border-radius: 20px; }
+        .switch-slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
+        input:checked + .switch-slider { background-color: var(--discord-green); }
+        input:checked + .switch-slider:before { transform: translateX(20px); }
 
-        .close-btn { background: transparent; border: 1px solid #555; color: #ccc; padding: 10px; width: 48%; border-radius: 4px; cursor: pointer; }
-        .save-btn { background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 10px; width: 48%; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        .action-row { display: flex; justify-content: space-between; margin-top: 20px; }
+        .save-profile-btn { background: var(--discord-green); border: none; color: white; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        .save-profile-btn:hover { background: #1f8b4c; }
 
+        /* スマホ/PC用フレンド管理モーダル */
+        .friend-modal-content { background: var(--panel-color); padding: 25px; border-radius: 8px; border: 2px solid var(--neon-cyan); width: 90%; max-width: 400px; color: white; max-height: 90vh; overflow-y: auto; }
         .friend-list-ul { list-style: none; padding: 0; margin-bottom: 20px; }
         .friend-list-li { display: flex; justify-content: space-between; align-items: center; background: #0b0c10; padding: 10px; margin-bottom: 5px; border-radius: 4px; border: 1px solid #1f2833; }
         .req-btn { background: transparent; border: 1px solid #555; color: white; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
         .req-accept { border-color: var(--neon-cyan); color: var(--neon-cyan); margin-right: 5px; }
         .req-reject { border-color: var(--neon-magenta); color: var(--neon-magenta); }
-        
+
+        /* PC/スマホ切替用のレスポンシブ設定 */
         @media screen and (min-width: 769px) {
-            #chat-page { 
-                width: 100vw !important;            
-                max-width: none !important;
-                height: 100vh !important;          
-                top: 0 !important; 
-                left: 0 !important;
-                border: none !important;
-                box-shadow: none !important;
-                border-radius: 0 !important;
-                flex-direction: row !important; 
-            }
+            #chat-page { width: 100vw !important; max-width: none !important; height: 100vh !important; top: 0 !important; left: 0 !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; flex-direction: row !important; }
             .sidebar { width: 280px; height: 100%; border-radius: 0; }
             .chat-main { height: 100%; border-radius: 0; }
+            .voice-settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         }
         @media screen and (max-width: 768px) {
             #chat-page { width: 100%; height: 100%; top: 0; left: 0; flex-direction: row !important; }
             .menu-toggle-btn { display: block; }
-            .sidebar { position: absolute; top: 55px; left: -260px; width: 260px; height: calc(100% - 55px); z-index: 100; transition: left 0.3s ease; border-right: 2px solid var(--neon-cyan); }
+            .sidebar { position: absolute; top: 55px; left: -280px; width: 280px; height: calc(100% - 55px); z-index: 100; transition: left 0.3s ease; border-right: 2px solid var(--neon-cyan); }
             .sidebar.open { left: 0; }
             .chat-main { width: 100%; height: 100%; }
+            /* スマホ時の設定モーダルを縦並びに強制 */
+            .modal-content { flex-direction: column; border-radius: 0; width: 100%; height: 100%; max-width: none; }
+            .settings-sidebar { width: 100%; border-right: none; border-bottom: 1px solid #1e1f22; flex-direction: row; overflow-x: auto; padding: 10px; }
+            .settings-tab { margin-bottom: 0; margin-right: 10px; white-space: nowrap; }
+            .settings-main { padding: 20px; }
+            .voice-settings-grid { display: flex; flex-direction: column; gap: 15px; }
         }
     </style>
 </head>
@@ -170,14 +201,10 @@
                 <div id="room-all" class="sidebar-item active" onclick="switchRoom('all')">💬 全体チャット</div>
                 
                 <div class="sidebar-section-title" style="margin-top:15px;">ボイスチャンネル</div>
-                <div class="sidebar-item" id="vc-channel-item" style="margin-bottom:0;">
-                    🔊 作業用ボイチャ
-                </div>
+                <div class="sidebar-item" id="vc-channel-item" style="margin-bottom:0;">🔊 作業用ボイチャ</div>
                 <ul id="vc-user-list" class="vc-member-list"></ul>
-                <div class="sidebar-item" style="margin-top:15px; border: 1px solid var(--neon-cyan); justify-content:center;" onclick="openFriendModal()">
-                    👥 フレンド管理
-                </div>
-
+                
+                <div class="sidebar-item" style="margin-top:15px; border: 1px solid var(--neon-cyan); justify-content:center;" onclick="openFriendModal()">👥 フレンド管理</div>
                 <div class="sidebar-section-title" style="margin-top:20px;">フレンドとのDM</div>
                 <div id="user-list"></div>
             </div>
@@ -202,34 +229,85 @@
     </div>
 
     <div id="settings-modal" class="modal">
-        <div class="modal-content">
-            <h3>⚙️ アプリ設定</h3>
-            <div class="settings-row" style="flex-direction: column; align-items: flex-start;">
-                <label style="color: #888; font-size: 0.8rem; margin-bottom: 5px;">名前の変更</label>
-                <input id="edit-username" type="text" style="width: 100%; padding: 10px; background: #0b0c10; color: white; border: 1px solid #1f2833; border-radius: 4px;">
+        <div class="modal-content" style="position: relative;">
+            <button class="close-settings-btn" onclick="closeSettings()">×</button>
+            
+            <div class="settings-sidebar">
+                <div class="settings-tab active" onclick="switchSettingTab('profile')">👤 マイアカウント</div>
+                <div class="settings-tab" onclick="switchSettingTab('voice')">🎙 音声・ビデオ</div>
             </div>
-            <div class="settings-row" style="flex-direction: column; align-items: flex-start;">
-                <label style="color: #888; font-size: 0.8rem; margin-bottom: 5px;">アイコンの変更</label>
-                <select id="edit-avatar" style="width: 100%; padding: 10px; background: #0b0c10; color: white; border: 1px solid #1f2833; border-radius: 4px;">
-                    <option value="👾">👾 サイバーコア</option><option value="💀">💀 ネオゴースト</option>
-                    <option value="🥷">🥷 プレイヤースーツ</option><option value="🦊">🦊 レーザーフォックス</option>
-                    <option value="🐉">🐉 ネオドラゴン</option><option value="⚡">⚡ ボルト</option><option value="🔥">🔥 フレア</option>
-                </select>
-            </div>
-            <div class="settings-row" style="margin-top: 20px;">
-                <span style="font-weight: bold;">🔊 チャット通知音</span>
-                <label class="switch"><input type="checkbox" id="sound-toggle" onchange="toggleSound()"><span class="slider"></span></label>
-            </div>
-            <div class="action-row">
-                <button class="close-btn" onclick="closeSettings()">キャンセル</button>
-                <button class="save-btn" onclick="saveSettings()">保存する</button>
+            
+            <div class="settings-main">
+                <div id="setting-sec-profile" class="settings-section active">
+                    <h3>マイアカウント</h3>
+                    <div class="form-group">
+                        <label>表示名</label>
+                        <input id="edit-username" type="text">
+                    </div>
+                    <div class="form-group">
+                        <label>アバターアイコン</label>
+                        <select id="edit-avatar">
+                            <option value="👾">👾 サイバーコア</option><option value="💀">💀 ネオゴースト</option>
+                            <option value="🥷">🥷 プレイヤースーツ</option><option value="🦊">🦊 レーザーフォックス</option>
+                            <option value="🐉">🐉 ネオドラゴン</option><option value="⚡">⚡ ボルト</option><option value="🔥">🔥 フレア</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="display: flex; align-items: center; justify-content: space-between; margin-top: 30px; border-top: 1px solid #3f4147; padding-top: 20px;">
+                        <div>
+                            <label style="margin:0; color:#fff;">チャット通知音</label>
+                            <span style="font-size: 0.75rem; color: #b5bac1;">メッセージ受信時に音を鳴らす</span>
+                        </div>
+                        <label class="switch"><input type="checkbox" id="sound-toggle" onchange="toggleSound()"><span class="switch-slider"></span></label>
+                    </div>
+                    <button class="save-profile-btn" onclick="saveSettings()">変更を保存</button>
+                </div>
+
+                <div id="setting-sec-voice" class="settings-section">
+                    <h3>音声設定</h3>
+                    <div class="voice-settings-grid">
+                        <div class="form-group">
+                            <label>入力デバイス（マイク）</label>
+                            <select id="mic-select">
+                                <option value="default">Default</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>出力デバイス（スピーカー）</label>
+                            <select id="speaker-select">
+                                <option value="default">Default</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>入力音量</label>
+                            <div class="slider-container">
+                                <input type="range" id="mic-volume" min="0" max="100" value="100">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>出力音量</label>
+                            <div class="slider-container">
+                                <input type="range" id="speaker-volume" min="0" max="100" value="100">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-top: 20px; border-top: 1px solid #3f4147; padding-top: 20px;">
+                        <label>マイクテスト</label>
+                        <span style="font-size: 0.8rem; color: #b5bac1;">話してマイクが反応しているか確認できます</span>
+                        <div class="mic-test-wrap">
+                            <button id="mic-test-btn" class="mic-test-btn" onclick="toggleMicTest()">確認してみましょう</button>
+                            <div class="mic-meter-bg">
+                                <div id="mic-meter-fill" class="mic-meter-fill"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <div id="friend-modal" class="modal">
-        <div class="modal-content">
-            <h3>👥 フレンド管理</h3>
+    <div id="friend-modal" class="modal" style="z-index: 1001;">
+        <div class="friend-modal-content" style="margin:auto;">
+            <h3 style="margin-bottom: 20px; text-align: center;">👥 フレンド管理</h3>
             <div style="display: flex; gap: 10px; margin-bottom: 20px;">
                 <input id="friend-search-input" type="text" placeholder="名前を入力して申請" style="flex-grow:1; padding: 10px; background: #0b0c10; color: white; border: 1px solid #1f2833; border-radius: 4px;">
                 <button onclick="sendFriendRequest()" style="background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 0 15px; border-radius: 4px; cursor: pointer;">申請</button>
@@ -238,14 +316,14 @@
             <ul id="friend-requests-list" class="friend-list-ul"></ul>
             <div style="font-size: 0.8rem; color: #888; margin-bottom: 5px;">🤝 現在のフレンド</div>
             <ul id="current-friends-list" class="friend-list-ul"></ul>
-            <div class="action-row" style="justify-content: center;"><button class="close-btn" style="width: 100%;" onclick="closeFriendModal()">閉じる</button></div>
+            <div style="display: flex; justify-content: center; margin-top: 20px;"><button style="background: transparent; border: 1px solid #555; color: #ccc; padding: 10px; width: 100%; border-radius: 4px; cursor: pointer;" onclick="closeFriendModal()">閉じる</button></div>
         </div>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://download.agora.io/sdk/web/AgoraRTC_N-4.22.0.js"></script>
     <script>
-        // 【最重要】ここにあなたがAgoraで取得した「App ID」を貼り付けてください
+        // 【最重要】Agora App IDを設定してください
         const AGORA_APP_ID = "055823a2780f4b5399ff92e7f37bb527"; 
 
         let isLoginMode = true;
@@ -258,6 +336,10 @@
         let agoraClient = null;
         let localAudioTrack = null;
         let isJoinedVoice = false;
+        
+        // マイクテスト用
+        let testAudioTrack = null;
+        let testInterval = null;
 
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
@@ -326,7 +408,6 @@
             document.getElementById('auth-page').style.display = 'none';
             const chatPage = document.getElementById('chat-page');
             chatPage.style.display = 'flex';
-            chatPage.style.flexDirection = 'column';
 
             document.getElementById('my-name').textContent = myUsername;
             document.getElementById('my-avatar').textContent = localStorage.getItem('doumei_avatar') || '👾';
@@ -357,12 +438,9 @@
                 }
             });
 
-            // 【新設仕様】サーバーからボイチャの最新参加者リストを受け取った時のイベント
-            // チャット欄へのテキスト通知やアラート音は一切発生させず、サイドバーのDOM書き換えのみを静かに実行する
             socket.on('voice users update', (voiceUsers) => {
                 const vcListUl = document.getElementById('vc-user-list');
-                vcListUl.innerHTML = ''; // 一度クリア
-                
+                vcListUl.innerHTML = ''; 
                 voiceUsers.forEach(user => {
                     const li = document.createElement('li');
                     li.classList.add('vc-member-item');
@@ -427,30 +505,43 @@
             if(data.success) loadFriends();
         }
 
+        /* ====== ボイチャ ＆ デバイス制御 ====== */
         function initAgora() {
             agoraClient = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
             agoraClient.on("user-published", async (user, mediaType) => {
                 await agoraClient.subscribe(user, mediaType);
-                if (mediaType === "audio") { user.audioTrack.play(); }
+                if (mediaType === "audio") { 
+                    user.audioTrack.play(); 
+                    // 出力音量の反映
+                    const vol = document.getElementById('speaker-volume').value;
+                    user.audioTrack.setVolume(parseInt(vol));
+                }
             });
         }
 
         async function toggleVoiceChat() {
-            if (AGORA_APP_ID === "YOUR_AGORA_APP_ID") {
-                return alert("ボイチャを有効にするには、index.htmlのApp IDを設定してね！");
-            }
+            if (AGORA_APP_ID === "YOUR_AGORA_APP_ID") return alert("ボイチャを有効にするには、index.htmlのApp IDを設定してね！");
 
             const btn = document.getElementById('vc-toggle-btn');
             if (!isJoinedVoice) {
                 try {
                     btn.textContent = "接続中...";
-                    let channelName = "global-voice-channel"; // ボイチャ専用固定チャンネル
+                    let channelName = "global-voice-channel"; 
                     
                     await agoraClient.join(AGORA_APP_ID, channelName, null, null);
-                    localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
-                    await agoraClient.publish([localAudioTrack]);
+                    
+                    // 設定で選ばれているマイクIDを取得して起動
+                    const micId = document.getElementById('mic-select').value;
+                    let trackConfig = {};
+                    if(micId !== 'default' && micId !== '') trackConfig.microphoneId = micId;
+                    
+                    localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack(trackConfig);
+                    
+                    // 入力音量の反映
+                    const vol = document.getElementById('mic-volume').value;
+                    localAudioTrack.setVolume(parseInt(vol));
 
-                    // サーバーへボイチャ参加シグナルを送信（静かな名前追加のためのトリガー）
+                    await agoraClient.publish([localAudioTrack]);
                     socket.emit('join voice');
 
                     isJoinedVoice = true;
@@ -458,7 +549,7 @@
                     btn.classList.add('connected');
                 } catch (err) {
                     console.error(err);
-                    alert("マイク接続に失敗したよ");
+                    alert("マイク接続に失敗しました。ブラウザのマイク権限を確認してね。");
                     btn.textContent = "🔊 通話に参加";
                     btn.classList.remove('connected');
                 }
@@ -469,19 +560,94 @@
 
         async function leaveVoiceChat() {
             const btn = document.getElementById('vc-toggle-btn');
-            if (localAudioTrack) {
-                localAudioTrack.stop();
-                localAudioTrack.close();
-                localAudioTrack = null;
-            }
+            if (localAudioTrack) { localAudioTrack.stop(); localAudioTrack.close(); localAudioTrack = null; }
             if (agoraClient) { await agoraClient.leave(); }
-            
-            // サーバーへボイチャ退出シグナルを送信（静かな名前削除のためのトリガー）
             socket.emit('leave voice');
-
             isJoinedVoice = false;
             btn.textContent = "🔊 通話に参加";
             btn.classList.remove('connected');
+        }
+
+        // デバイスの取得とドロップダウンへの反映
+        async function fetchDevices() {
+            try {
+                // デバイス名を取得するには一度仮のアクセス権を要求する必要がある（ブラウザ仕様）
+                const tempTrack = await AgoraRTC.createMicrophoneAudioTrack();
+                tempTrack.close();
+
+                const mics = await AgoraRTC.getMicrophones();
+                const speakers = await AgoraRTC.getPlaybackDevices();
+
+                const micSelect = document.getElementById('mic-select');
+                micSelect.innerHTML = '';
+                mics.forEach(mic => {
+                    const opt = document.createElement('option');
+                    opt.value = mic.deviceId; opt.text = mic.label || '不明なマイク';
+                    micSelect.appendChild(opt);
+                });
+
+                const spkSelect = document.getElementById('speaker-select');
+                spkSelect.innerHTML = '';
+                speakers.forEach(spk => {
+                    const opt = document.createElement('option');
+                    opt.value = spk.deviceId; opt.text = spk.label || '不明なスピーカー';
+                    spkSelect.appendChild(opt);
+                });
+            } catch (e) {
+                console.error("デバイス取得エラー", e);
+            }
+        }
+
+        // マイクテスト（Visualizer）機能
+        async function toggleMicTest() {
+            const btn = document.getElementById('mic-test-btn');
+            const fill = document.getElementById('mic-meter-fill');
+            
+            if (testInterval) {
+                // テスト停止
+                clearInterval(testInterval);
+                testInterval = null;
+                if(testAudioTrack) { testAudioTrack.stop(); testAudioTrack.close(); testAudioTrack = null; }
+                fill.style.width = '0%';
+                btn.textContent = "確認してみましょう";
+                btn.classList.remove('testing');
+            } else {
+                // テスト開始
+                try {
+                    btn.textContent = "接続中...";
+                    const micId = document.getElementById('mic-select').value;
+                    let trackConfig = {};
+                    if(micId !== 'default' && micId !== '') trackConfig.microphoneId = micId;
+                    
+                    testAudioTrack = await AgoraRTC.createMicrophoneAudioTrack(trackConfig);
+                    
+                    btn.textContent = "テスト停止";
+                    btn.classList.add('testing');
+                    
+                    testInterval = setInterval(() => {
+                        if(testAudioTrack) {
+                            // 0〜100の音量レベルを取得
+                            const level = testAudioTrack.getVolumeLevel();
+                            // バーの幅に反映（少し増幅させて見やすくする）
+                            fill.style.width = Math.min(level * 250, 100) + '%';
+                        }
+                    }, 100);
+                } catch(e) {
+                    alert("マイクが見つからないか、許可されていません");
+                    btn.textContent = "確認してみましょう";
+                }
+            }
+        }
+
+        /* ====== モーダル・タブ制御 ====== */
+        function switchSettingTab(tabName) {
+            document.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.settings-section').forEach(s => s.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById('setting-sec-' + tabName).classList.add('active');
+
+            if(tabName === 'voice') fetchDevices(); // 音声タブを開いた時にデバイス取得
         }
 
         function playNotificationSound() {
@@ -498,8 +664,19 @@
         }
 
         function toggleSound() { isSoundEnabled = document.getElementById('sound-toggle').checked; localStorage.setItem('doumei_sound', isSoundEnabled); }
-        function openSettings() { document.getElementById('edit-username').value = myUsername; document.getElementById('edit-avatar').value = localStorage.getItem('doumei_avatar') || '👾'; document.getElementById('sound-toggle').checked = isSoundEnabled; document.getElementById('settings-modal').style.display = 'flex'; }
-        function closeSettings() { document.getElementById('settings-modal').style.display = 'none'; }
+        
+        function openSettings() { 
+            document.getElementById('edit-username').value = myUsername; 
+            document.getElementById('edit-avatar').value = localStorage.getItem('doumei_avatar') || '👾'; 
+            document.getElementById('sound-toggle').checked = isSoundEnabled; 
+            document.getElementById('settings-modal').style.display = 'flex'; 
+        }
+        
+        function closeSettings() { 
+            document.getElementById('settings-modal').style.display = 'none'; 
+            // マイクテスト中なら自動停止
+            if(testInterval) toggleMicTest();
+        }
 
         async function saveSettings() {
             const newUsername = document.getElementById('edit-username').value.trim();
