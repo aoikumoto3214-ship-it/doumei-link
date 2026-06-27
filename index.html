@@ -89,41 +89,37 @@
 
         /* ====== 設定モーダル群 ====== */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; }
-        .modal-content { background: var(--discord-gray); border-radius: 8px; width: 95%; max-width: 800px; color: white; display: flex; height: 80vh; overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+        .modal-content { background: var(--discord-gray); border-radius: 8px; width: 95%; max-width: 800px; color: white; display: flex; height: 85vh; overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
         
-        /* 設定モーダル内のサイドバー */
-        .settings-sidebar { width: 200px; background: var(--discord-gray); padding: 20px 10px; border-right: 1px solid #1e1f22; display: flex; flex-direction: column; }
+        .settings-sidebar { width: 200px; background: var(--discord-gray); padding: 20px 10px; border-right: 1px solid #1e1f22; display: flex; flex-direction: column; z-index: 10; }
         .settings-tab { padding: 10px 15px; border-radius: 4px; cursor: pointer; color: #b5bac1; font-weight: bold; margin-bottom: 5px; transition: background 0.2s; }
         .settings-tab:hover { background: rgba(255,255,255,0.05); color: #fff; }
         .settings-tab.active { background: rgba(255,255,255,0.1); color: #fff; }
         
-        /* 設定モーダル内のメインエリア */
-        .settings-main { flex-grow: 1; background: var(--discord-gray); padding: 40px; overflow-y: auto; position: relative; }
+        .settings-main { flex-grow: 1; background: var(--discord-gray); padding: 40px; overflow-y: auto; position: relative; z-index: 5; }
         .settings-main h3 { font-size: 1.2rem; margin-bottom: 25px; border-bottom: 1px solid #3f4147; padding-bottom: 10px; }
         .settings-section { display: none; }
         .settings-section.active { display: block; }
-        .close-settings-btn { position: absolute; top: 20px; right: 20px; background: transparent; border: 2px solid #555; color: #ccc; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-weight: bold; display: flex; align-items: center; justify-content: center; }
-        .close-settings-btn:hover { border-color: white; color: white; }
+        
+        /* 最前面に配置する確実な閉じるボタンのスタイル（Z-indexを100に指定） */
+        .close-settings-btn { position: absolute; top: 20px; right: 20px; background: #202225; border: 2px solid #555; color: #ccc; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-weight: bold; display: flex; align-items: center; justify-content: center; z-index: 100; font-size: 16px; }
+        .close-settings-btn:hover { border-color: white; color: white; background: #36393f; }
 
-        /* フォーム部品デザイン */
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; font-size: 0.8rem; font-weight: bold; color: #b5bac1; margin-bottom: 8px; text-transform: uppercase; }
         .form-group input[type="text"], .form-group select { width: 100%; padding: 10px; background: var(--discord-dark); color: white; border: none; border-radius: 4px; font-size: 0.95rem; }
         .form-group input[type="text"]:focus, .form-group select:focus { outline: none; box-shadow: 0 0 0 2px var(--neon-cyan); }
         
-        /* スライダー（音量・感度） */
         .slider-container { display: flex; align-items: center; gap: 15px; }
         input[type="range"] { flex-grow: 1; -webkit-appearance: none; background: #4f545c; height: 6px; border-radius: 3px; outline: none; }
         input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: white; cursor: pointer; }
         
-        /* マイクテストバー */
         .mic-test-wrap { display: flex; align-items: center; gap: 15px; margin-top: 15px; }
         .mic-test-btn { background: var(--discord-gray); border: 1px solid #555; color: white; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-size: 0.9rem; transition: 0.2s; }
         .mic-test-btn.testing { border-color: var(--discord-green); color: var(--discord-green); }
         .mic-meter-bg { flex-grow: 1; background: var(--discord-dark); height: 10px; border-radius: 5px; overflow: hidden; }
         .mic-meter-fill { width: 0%; height: 100%; background: var(--discord-green); transition: width 0.1s; }
 
-        /* スイッチ */
         .switch { position: relative; display: inline-block; width: 40px; height: 20px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .switch-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #80848e; transition: .3s; border-radius: 20px; }
@@ -131,10 +127,10 @@
         input:checked + .switch-slider { background-color: var(--discord-green); }
         input:checked + .switch-slider:before { transform: translateX(20px); }
 
-        .save-profile-btn { background: var(--discord-green); border: none; color: white; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        /* アクション用のネオン・Discord共通ボタン */
+        .save-profile-btn { background: var(--discord-green); border: none; color: white; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: 10px; transition: background 0.2s; }
         .save-profile-btn:hover { background: #1f8b4c; }
 
-        /* スマホ/PC用フレンド管理モーダル */
         .friend-modal-content { background: var(--panel-color); padding: 25px; border-radius: 8px; border: 2px solid var(--neon-cyan); width: 90%; max-width: 400px; color: white; max-height: 90vh; overflow-y: auto; }
         .friend-list-ul { list-style: none; padding: 0; margin-bottom: 20px; }
         .friend-list-li { display: flex; justify-content: space-between; align-items: center; background: #0b0c10; padding: 10px; margin-bottom: 5px; border-radius: 4px; border: 1px solid #1f2833; }
@@ -142,7 +138,6 @@
         .req-accept { border-color: var(--neon-cyan); color: var(--neon-cyan); margin-right: 5px; }
         .req-reject { border-color: var(--neon-magenta); color: var(--neon-magenta); }
 
-        /* PC/スマホ切替用のレスポンシブ設定 */
         @media screen and (min-width: 769px) {
             #chat-page { width: 100vw !important; max-width: none !important; height: 100vh !important; top: 0 !important; left: 0 !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; flex-direction: row !important; }
             .sidebar { width: 280px; height: 100%; border-radius: 0; }
@@ -155,7 +150,6 @@
             .sidebar { position: absolute; top: 55px; left: -280px; width: 280px; height: calc(100% - 55px); z-index: 100; transition: left 0.3s ease; border-right: 2px solid var(--neon-cyan); }
             .sidebar.open { left: 0; }
             .chat-main { width: 100%; height: 100%; }
-            /* スマホ時の設定モーダルを縦並びに強制 */
             .modal-content { flex-direction: column; border-radius: 0; width: 100%; height: 100%; max-width: none; }
             .settings-sidebar { width: 100%; border-right: none; border-bottom: 1px solid #1e1f22; flex-direction: row; overflow-x: auto; padding: 10px; }
             .settings-tab { margin-bottom: 0; margin-right: 10px; white-space: nowrap; }
@@ -229,7 +223,7 @@
     </div>
 
     <div id="settings-modal" class="modal">
-        <div class="modal-content" style="position: relative;">
+        <div class="modal-content">
             <button class="close-settings-btn" onclick="closeSettings()">×</button>
             
             <div class="settings-sidebar">
@@ -259,7 +253,11 @@
                         </div>
                         <label class="switch"><input type="checkbox" id="sound-toggle" onchange="toggleSound()"><span class="switch-slider"></span></label>
                     </div>
-                    <button class="save-profile-btn" onclick="saveSettings()">変更を保存</button>
+                    
+                    <div style="display: flex; gap: 10px; margin-top: 30px; border-top: 1px solid #3f4147; padding-top: 20px;">
+                        <button class="save-profile-btn" onclick="saveSettings()">変更を保存</button>
+                        <button class="save-profile-btn" style="background: #4f545c;" onclick="closeSettings()">設定を閉じる（戻る）</button>
+                    </div>
                 </div>
 
                 <div id="setting-sec-voice" class="settings-section">
@@ -300,6 +298,10 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <div style="margin-top: 30px; border-top: 1px solid #3f4147; padding-top: 20px; display: flex; justify-content: flex-end;">
+                        <button class="save-profile-btn" style="background: #4f545c; width: 100%;" onclick="closeSettings()">設定を閉じる（戻る）</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -323,7 +325,7 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://download.agora.io/sdk/web/AgoraRTC_N-4.22.0.js"></script>
     <script>
-        // 【最重要】Agora App IDを設定してください
+        // 【最重要】ここにあなたがAgoraで取得した「App ID」を必ず貼り付けてください
         const AGORA_APP_ID = "055823a2780f4b5399ff92e7f37bb527"; 
 
         let isLoginMode = true;
@@ -337,7 +339,6 @@
         let localAudioTrack = null;
         let isJoinedVoice = false;
         
-        // マイクテスト用
         let testAudioTrack = null;
         let testInterval = null;
 
@@ -505,14 +506,12 @@
             if(data.success) loadFriends();
         }
 
-        /* ====== ボイチャ ＆ デバイス制御 ====== */
         function initAgora() {
             agoraClient = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
             agoraClient.on("user-published", async (user, mediaType) => {
                 await agoraClient.subscribe(user, mediaType);
                 if (mediaType === "audio") { 
                     user.audioTrack.play(); 
-                    // 出力音量の反映
                     const vol = document.getElementById('speaker-volume').value;
                     user.audioTrack.setVolume(parseInt(vol));
                 }
@@ -530,14 +529,12 @@
                     
                     await agoraClient.join(AGORA_APP_ID, channelName, null, null);
                     
-                    // 設定で選ばれているマイクIDを取得して起動
                     const micId = document.getElementById('mic-select').value;
                     let trackConfig = {};
                     if(micId !== 'default' && micId !== '') trackConfig.microphoneId = micId;
                     
                     localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack(trackConfig);
                     
-                    // 入力音量の反映
                     const vol = document.getElementById('mic-volume').value;
                     localAudioTrack.setVolume(parseInt(vol));
 
@@ -568,10 +565,9 @@
             btn.classList.remove('connected');
         }
 
-        // デバイスの取得とドロップダウンへの反映
         async function fetchDevices() {
             try {
-                // デバイス名を取得するには一度仮のアクセス権を要求する必要がある（ブラウザ仕様）
+                // ブラウザ標準命令を使い、確実にデバイスへの仮アクセス権限とリストを呼び出す
                 const tempTrack = await AgoraRTC.createMicrophoneAudioTrack();
                 tempTrack.close();
 
@@ -598,13 +594,12 @@
             }
         }
 
-        // マイクテスト（Visualizer）機能
+        // ▼ 修正：強制ポップアップ要求ロジックを組み込んだマイクテスト関数 ▼
         async function toggleMicTest() {
             const btn = document.getElementById('mic-test-btn');
             const fill = document.getElementById('mic-meter-fill');
             
             if (testInterval) {
-                // テスト停止
                 clearInterval(testInterval);
                 testInterval = null;
                 if(testAudioTrack) { testAudioTrack.stop(); testAudioTrack.close(); testAudioTrack = null; }
@@ -612,9 +607,12 @@
                 btn.textContent = "確認してみましょう";
                 btn.classList.remove('testing');
             } else {
-                // テスト開始
                 try {
                     btn.textContent = "接続中...";
+                    
+                    // 【解決命令】ブラウザ標準の命令で権限要求のポップアップを強制的に発生させる
+                    await navigator.mediaDevices.getUserMedia({ audio: true });
+                    
                     const micId = document.getElementById('mic-select').value;
                     let trackConfig = {};
                     if(micId !== 'default' && micId !== '') trackConfig.microphoneId = micId;
@@ -626,20 +624,19 @@
                     
                     testInterval = setInterval(() => {
                         if(testAudioTrack) {
-                            // 0〜100の音量レベルを取得
                             const level = testAudioTrack.getVolumeLevel();
-                            // バーの幅に反映（少し増幅させて見やすくする）
                             fill.style.width = Math.min(level * 250, 100) + '%';
                         }
                     }, 100);
                 } catch(e) {
-                    alert("マイクが見つからないか、許可されていません");
+                    console.error(e);
+                    // 過去にブロック済みのブラウザに具体的な解除手順を提示する
+                    alert("【マイクの許可が必要です】\nブラウザのURL入力欄の左側にある「鍵のマーク」または「丸にスライダーのマーク（設定）」をクリックし、マイクが『ブロック』や『オフ』になっていたら『許可』に変更して、ページを再読み込みしてください。");
                     btn.textContent = "確認してみましょう";
                 }
             }
         }
 
-        /* ====== モーダル・タブ制御 ====== */
         function switchSettingTab(tabName) {
             document.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.settings-section').forEach(s => s.classList.remove('active'));
@@ -647,7 +644,7 @@
             event.target.classList.add('active');
             document.getElementById('setting-sec-' + tabName).classList.add('active');
 
-            if(tabName === 'voice') fetchDevices(); // 音声タブを開いた時にデバイス取得
+            if(tabName === 'voice') fetchDevices(); 
         }
 
         function playNotificationSound() {
@@ -674,7 +671,6 @@
         
         function closeSettings() { 
             document.getElementById('settings-modal').style.display = 'none'; 
-            // マイクテスト中なら自動停止
             if(testInterval) toggleMicTest();
         }
 
@@ -716,7 +712,7 @@
             else { wrapper.classList.add('other'); const nameSpan = document.createElement('span'); nameSpan.classList.add('user-name'); nameSpan.textContent = `${data.avatar} ${data.from}`; wrapper.appendChild(nameSpan); }
             const contentDiv = document.createElement('div'); contentDiv.classList.add('msg-content'); contentDiv.textContent = data.msg; wrapper.appendChild(contentDiv);
             const timeDiv = document.createElement('div'); timeDiv.classList.add('timestamp'); const msgDate = data.time ? new Date(data.time) : new Date(); const hours = String(msgDate.getHours()).padStart(2, '0'); const minutes = String(msgDate.getMinutes()).padStart(2, '0'); timeDiv.textContent = `${hours}:${minutes}`; wrapper.appendChild(timeDiv);
-            messages.appendChild(wrapper); messages.scrollHeight = messages.scrollHeight;
+            messages.appendChild(wrapper); messages.scrollTop = messages.scrollHeight;
         }
     </script>
 </body>
